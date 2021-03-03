@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Reply;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -48,5 +49,17 @@ public class ReplyRepositoryTests {
 //        System.out.println("=================");
 //        System.out.println(result.get());
 //        System.out.println("=================");
+    }
+
+    @Transactional
+    @Test
+    public void listBoard(){
+
+        List<Reply> replyList = replyRepository.getRepliesByBoardOrderByRno(Board.builder()
+        .bno(100L).build());
+
+        replyList.forEach(reply -> {
+            System.out.println(reply);
+        });
     }
 }

@@ -57,6 +57,190 @@
             <button type="button" class="btn btn-info"> List</button>
         </a>
 
+        <div>
+            <div class = "mt-4">
+                <h5><span class="badge badge-secondary replyCount">
+                    Reply Count [[${dto.replyCount}]]</span></h5>
+            </div>
+
+            <div class="form-group">
+                <form>
+                    <input type="text" name="replyText" placeholder="댓글을 입력해주세요" size="50">
+                    <input type="text" name="replyer" placeholder="작성자" size="30">
+                    <button type ="button" class="btn btn-primary replySave">Save</button>
+                </form>
+            </div>
+
+            <div class="list-group replyList"> </div>
+        </div>
+
+
+        <script>
+
+            function formatTime(str){
+                var date = new Date(str);
+
+                return date.getFullYear() + '/' +
+                    (date.getMonth() + 1) + '/' +
+                    date.getDate() + ' ' +
+                    date.getHours() + ':' +
+                    date.getMinutes();
+            }
+
+
+            function fn_editReply(rno, replyer, content, date){
+
+                var str = "";
+                str += '<div class="card-body" id="rno'+rno+'"><b>'+rno +'</b>';
+                str += '<h0 class="reply_set"><a href="javascript:void(0)" style="padding-right:5px" onclick="modifyReply(' + rno + ', \''+ replyer + '\')">저장</a>' +
+                    '</h0><h0 class="reply_set"><a href="javascript:void(0)" onclick="loadJSONData()">취소</a></h0>';
+                str += ' <input name="editContent" id="editContent" class="form-control" rows="2" value="'+content+'">'
+                str += ' <h6 class="card-subtitle mb-2 text-muted">' + replyer
+                    +'</h6>';
+
+                str += ' <p class="card-text">' + formatTime(date);
+                str += '</p>'
+                str += ' </div>';
+
+                $('#rno' + rno).replaceWith(str);
+                $('#rno' + rno + ' #editContent').focus();
+            }
+
+
+            function modifyReply(rno, replyer){
+
+                var text = $("input[name='editContent']").val();
+                var bno = [[${dto.bno}]];
+
+                var reply = {
+                    rno : rno,
+                    bno: bno,
+                    text: text,
+                    replyer: replyer
+                }
+                // var headers = {"Content-Type" : "application/json"
+                //     , "X-HTTP-Method-Override" : "put"};
+                $.ajax({
+                    url: "/replies/" + rno
+                    // , headers : headers
+                    , method : 'put'
+                    , contentType : 'application/json; charset=utf-8'
+                    , data : JSON.stringify(reply)
+                    , type : 'POST'
+                    , dataType : 'text'
+                    , success: function(data){
+
+                        var modRno = parseInt(data);
+
+                        alert(modRno + "번 댓글이 수정되었습니다.")
+                        loadJSONData();
+                    }
+                    , error: function(error){
+                        console.log("에러 : " + error);
+                    }
+                });
+
+            }
+
+            function fn_deleteReply(rno){
+                $.ajax({
+                    url: "/replies/" + rno
+                    , method : 'delete'
+                    , success: function(data){
+
+                        var delRno = parseInt(data);
+
+                        alert(delRno + "번 댓글이 삭제되었습니다.")
+                        loadJSONData();
+                    }
+                    , error: function(error){
+                        console.log("에러 : " + error);
+                    }
+                });
+
+            }
+
+
+            function loadJSONData() {
+
+                var bno = [[${dto.bno}]];
+
+                var listGroup = $(".replyList");
+
+                $.getJSON('/replies/board/' + bno, function(arr){
+
+                    var str = "";
+
+                    $('.replyCount').html(" Reply Count " + arr.length);
+
+                    $.each(arr, function(idx, reply){
+                        str += '<div class="card-body" id="rno'+reply.rno+'"><b>'+reply.rno +'</b>';
+                        str += '<h0 class="reply_set"><a href="javascript:void(0)" onclick="fn_editReply(' + reply.rno + ', \'' + reply.replyer + '\', \'' + reply.text + '\' , \''+ reply.regDate+'\')" style="padding-right:5px">수정</a>' +
+                            '</h0><h0 class="reply_set"><a href="javascript:void(0)" onclick="fn_deleteReply(' + reply.rno + ')">삭제</a></h0>';
+                        str += ' <h5 class="card-title">' + reply.text+'</h5>';
+                        str += ' <h6 class="card-subtitle mb-2 text-muted">' + reply.replyer
+                            +'</h6>';
+
+                        str += ' <p class="card-text">' + formatTime(reply.regDate);
+                        str += '</p>'
+                        str += ' </div>';
+                    })
+
+                    listGroup.html(str);
+                })
+            }
+
+
+
+
+            $(".replySave").click(function(){
+
+                var bno = [[${dto.bno}]];
+
+                var reply = {
+                    bno: bno,
+                    text: $('input[name="replyText"]').val(),
+                    replyer: $('input[name="replyer"]').val()
+                }
+
+
+                var headers = {"Content-Type" : "application/json"
+                    , "X-HTTP-Method-Override" : "POST"};
+                $.ajax({
+                    url: "/replies/"
+                    , headers : headers
+                    , data : JSON.stringify(reply)
+                    , type : 'POST'
+                    , dataType : 'text'
+                    , success: function(data){
+
+                        var newRno = parseInt(data);
+
+                        alert(newRno + "번 댓글이 등록되었습니다.")
+                        loadJSONData();
+                        $('input[name="replyText"]').val("");
+                        $('input[name="replyer"]').val("");
+                    }
+                    , error: function(error){
+                        console.log("에러 : " + error);
+                    }
+                });
+            })
+
+
+
+            $(document).ready(function(){
+
+                loadJSONData();
+
+            })
+
+
+
+
+        </script>
+
+
     </th:block>
 
 

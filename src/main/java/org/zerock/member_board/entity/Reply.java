@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@ToString
+@ToString (exclude = "board")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +21,10 @@ public class Reply extends BaseEntity{
     private String replyer;
 
 //(fetch = FetchType.LAZY)
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     private Board board;
+
+    public void changeContent(String text) {
+        this.text = text;
+    }
 }
