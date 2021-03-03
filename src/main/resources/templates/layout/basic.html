@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <th:block th:fragment="setContent(content)">
 <head>
@@ -40,8 +40,14 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
         <div class="sidebar-heading"> <a th:href="@{/}">AppMeeting Matching </a></div>
         <div class="list-group list-group-flush">
-            <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Metting Board</a>
+            <div>
+                <a sec:authorize="isAnonymous()" class="list-group-item list-group-item-action bg-light loginBtn"
+                   th:href="@{/member/login}">Login</a>
+                <a sec:authorize="isAuthenticated()" class="list-group-item list-group-item-action bg-light logoutBtn"
+                   th:href="@{/member/logout}"><h0>Logout</h0></a>
 
+            </div>
+            <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Metting Board</a>
         </div>
     </div>
     <!-- /#sidebar-wrapper -->
