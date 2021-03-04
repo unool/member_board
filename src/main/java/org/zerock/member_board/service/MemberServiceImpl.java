@@ -9,16 +9,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.member_board.dto.MemberDTO;
+import org.zerock.member_board.dto.SessionUser;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.repository.MemberRepository;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class MemberServiceImpl implements UserDetailsService,MemberService {
-
+    private final HttpSession httpSession;
     Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
     private final MemberRepository memberRepository;
 
@@ -32,6 +34,8 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
         if(result.isPresent())
         {
             member = result.get();
+
+            httpSession.setAttribute("user",new SessionUser(member));
         }
         else
         {
@@ -70,4 +74,6 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
     public void deleteMember(String email) {
         memberRepository.deleteById(email);
     }
+
+
 }

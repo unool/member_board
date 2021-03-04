@@ -18,9 +18,12 @@
 
             <div class="form-group">
                 <label>Writer Email</label>
-                <input type="email" class="form-control" name="writerEmail" placeholder="Writer Email">
+                <input type="email" class="form-control" name="writerNam"
+                th:value="${session['user'].name}" readonly>
 
             </div>
+
+            <input type="hidden" name="writerEmail" th:value="${session['user'].email}">
 
             <button type="submit" class="btn btn-primary"> Submit</button>
         </form>

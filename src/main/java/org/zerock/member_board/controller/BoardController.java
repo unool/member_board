@@ -12,6 +12,8 @@ import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.service.BoardService;
 
+import javax.servlet.http.HttpSession;
+
 @RequestMapping("/board/")
 @Controller
 public class BoardController {
@@ -35,6 +37,7 @@ public class BoardController {
     @PostMapping("/register")
     public String registerPost(BoardDTO dto, RedirectAttributes redirectAttributes){
 
+        System.out.println("<> ===========" + dto);
         Long bno = boardService.register(dto);
 
         redirectAttributes.addAttribute("bno", bno);

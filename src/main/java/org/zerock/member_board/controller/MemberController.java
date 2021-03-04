@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +22,19 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/login")
-    public void login(){
+    public void login(String useremail, String userpass, Model model){
+
+        System.out.println("loginGet");
+        System.out.println("========================= "+useremail);
+        System.out.println("========================= "+userpass);
+
+        model.addAttribute("useremail",useremail);
+        model.addAttribute("userepass",userpass);
 
     }
     @PostMapping ("/login")
     public void loginPost(){
-        System.out.println("complete");
+        System.out.println("loginPost");
     }
 
     @GetMapping("/signup")
@@ -45,4 +53,14 @@ public class MemberController {
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return "redirect:/";
     }
+
+
+    @PostMapping("/test")
+    public String test(MemberDTO dto){
+        memberService.registerMember(dto);
+
+        return "redirect:/";
+    }
+
+
 }
