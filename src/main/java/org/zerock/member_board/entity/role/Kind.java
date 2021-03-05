@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Role {
-    ADMIN("ROLE_ADMIN", "관리자"),
-    GUEST("ROLE_GUEST", "손님"),
-    USER("ROLE_USER", "일반 사용자");
+public enum Kind {
+    NAVER("KIND_NAVER", "네이버유저"),
+    GOOGLE("KIND_GOOGLE", "구글유저"),
+    NORMAL("KIND_NORMAL", "일반유저");
     private final String key;
     private final String title;
 
-
 }
+
+

@@ -3,7 +3,9 @@ package org.zerock.member_board.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.User;
+import org.zerock.member_board.entity.role.Kind;
 import org.zerock.member_board.entity.role.Role;
 
 import java.util.Map;
@@ -12,16 +14,17 @@ import java.util.Map;
 @Getter
 public class OAuthAttributes {
     private Map<String, Object> attributes;
-    private String nameAttributeKey, name, email, picture;
+    private String nameAttributeKey, name, email, picture, kind;
     @Builder
     public OAuthAttributes(Map<String, Object> attributes,
                            String nameAttributeKey,
-                           String name, String email, String picture) {
+                           String name, String email, String picture, String kind) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
         this.picture = picture;
+        this.kind = kind;
     }
     public static OAuthAttributes of(String registrationId,
                                      String userNameAttributeName,
@@ -43,6 +46,7 @@ public class OAuthAttributes {
                 .name((String) response.get("name"))
                 .email((String) response.get("email"))
                 .picture((String) response.get("profile_image"))
+                .kind(Kind.NAVER.getKey())
                 .attributes(response)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
@@ -54,16 +58,27 @@ public class OAuthAttributes {
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
+                .kind(Kind.GOOGLE.getKey())
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
-    public User toEntity() {
-        return User.builder()
+//    public User toEntity() {
+//        return User.builder()
+//                .name(name)
+//                .email(email)
+//                .picture(picture)
+//                .role(Role.GUEST)
+//                .build();
+//    }
+
+    public Member toEntity() {
+        return Member.builder()
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUEST)
+                .auth(Role.USER.getKey())
+                .kind(kind)
                 .build();
     }
 }

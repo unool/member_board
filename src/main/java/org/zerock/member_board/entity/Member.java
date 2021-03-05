@@ -5,10 +5,9 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.zerock.member_board.entity.role.Role;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +37,22 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "auth")
     private String auth;
 
+    @Column
+    private String picture;
+
+    @Column(name = "kind")
+    private String kind;
+
 
     @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        Set<GrantedAuthority> roles = new HashSet<>();
+//        for (String role : role.split(",")) {
+//            roles.add(new SimpleGrantedAuthority(role));
+//        }
+//        return roles;
+//    }
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new HashSet<>();
         for (String role : auth.split(",")) {
@@ -78,4 +91,13 @@ public class Member extends BaseEntity implements UserDetails {
         return this.password;
     }
 
+    public Member update(String name, String picture, String kind) {
+        this.name = name;
+        this.picture = picture;
+        this.kind = kind;
+        return this;
+    }
+
 }
+
+

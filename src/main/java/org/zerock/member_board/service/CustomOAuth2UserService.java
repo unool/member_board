@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.dto.OAuthAttributes;
 import org.zerock.member_board.dto.SessionUser;
+import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.User;
+import org.zerock.member_board.repository.MemberRepository;
 import org.zerock.member_board.repository.UserRepository;
 
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -28,6 +31,8 @@ import java.util.stream.Collectors;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     private final HttpSession httpSession;
+    private final MemberRepository memberRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -46,42 +51,52 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         // OAuthAttributes: attribute를 담을 클래스 (개발자가 생성)
         OAuthAttributes attributes = OAuthAttributes
                 .of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-        User user = saveOrUpdate(attributes);
+        Member member = saveOrUpdate(attributes);
         // SessioUser: 세션에 사용자 정보를 저장하기 위한 DTO 클래스 (개발자가 생성)
 
         System.out.println("CustomOAuth2UserService : >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+this.toString());
         System.out.println("세션 아이디 : >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+httpSession.getId());
-        httpSession.setAttribute("user", new SessionUser(user));
+        httpSession.setAttribute("user", new SessionUser(member));
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+                Collections.singleton(new SimpleGrantedAuthority(member.getAuth())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey()
         );
     }
-    private User saveOrUpdate(OAuthAttributes attributes) {
-//        List<User> user = userRepository.findByEmail(attributes.getEmail())
-//                .map(entity -> entity.update(attributes.getName(), attributes.getPicture())).collect(Collectors.toList());
+    private Member saveOrUpdate(OAuthAttributes attributes) {
 
-        //        return userRepository.save(user.get(0));
-
+        List<Member> result = memberRepository.findById(attributes.getEmail()).stream()
+                .map(entity-> entity.update(attributes.getName(), attributes.getPicture(), attributes.getKind())).collect(Collectors.toList());
 
 
-
-        List<User> result = userRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.getName(), attributes.getPicture())).collect(Collectors.toList());
-
-        User user;
-
+        Member member;
         if(result.isEmpty())
         {
-            user = attributes.toEntity();
+            member = attributes.toEntity();
         }
         else
         {
-            user = result.get(0);
+            member = result.get(0);
         }
 
-        return userRepository.save(user);
+        return memberRepository.save(member);
+
+
+//        List<User> result = userRepository.findByEmail(attributes.getEmail())
+//                .map(entity -> entity.update(attributes.getName(), attributes.getPicture())).collect(Collectors.toList());
+//
+//        User user;
+//
+//        if(result.isEmpty())
+//        {
+//            user = attributes.toEntity();
+//        }
+//        else
+//        {
+//            user = result.get(0);
+//        }
+//
+//        return userRepository.save(user);
 
 
     }

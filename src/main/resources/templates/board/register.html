@@ -17,6 +17,16 @@
             </div>
 
             <div class="form-group">
+                <label >Meeting Costs</label>
+                <input class="form-control" name="meeting_costs">
+            </div>
+
+            <div class="form-group">
+                <label >Meeting Place</label>
+                <input class="form-control" name="meeting_place">
+            </div>
+
+            <div class="form-group">
                 <label>Writer Email</label>
                 <input type="email" class="form-control" name="writerNam"
                 th:value="${session['user'].name}" readonly>

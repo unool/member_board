@@ -70,6 +70,7 @@ public class BoardServiceImpl implements BoardService{
         if(!board.equals(null))
         {
             board.changeContent(boardDTO.getContent());
+            board.changeTitle(boardDTO.getTitle());
 
         }
 

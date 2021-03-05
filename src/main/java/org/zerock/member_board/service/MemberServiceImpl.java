@@ -57,6 +57,7 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
                 .phone(dto.getPhone())
                 .password(encoder.encode(dto.getPassword()))
                 .auth(dto.getAuth())
+                .kind(dto.getKind())
                 .build();
         return memberRepository.save(member).getEmail();
     }
