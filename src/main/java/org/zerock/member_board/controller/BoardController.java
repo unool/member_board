@@ -1,6 +1,9 @@
 package org.zerock.member_board.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.member_board.dto.BoardDTO;
+import org.zerock.member_board.dto.OAuthAttributes;
 import org.zerock.member_board.dto.PageRequestDTO;
+import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.service.BoardService;
 
 import javax.servlet.http.HttpSession;
@@ -24,6 +29,10 @@ public class BoardController {
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model)
     {
+        //삭제
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
         model.addAttribute("result", boardService.getList(pageRequestDTO));
 
     }

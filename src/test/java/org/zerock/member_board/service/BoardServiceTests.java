@@ -24,7 +24,7 @@ public class BoardServiceTests {
                 .writerEmail("user20@naver.com")
                 .build();
 
-        boardService.register(boardDTO);
+//        boardService.register(boardDTO);
     }
 
     @Test

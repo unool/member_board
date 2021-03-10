@@ -8,35 +8,225 @@
         <form th:action="@{/board/register}" th:method="post">
             <div class="form-group">
                 <label >Title</label>
-                <input type="text" class="form-control" name="title" placeholder="Enter Title">
+                <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">
 
             </div>
             <div class="form-group">
                 <label >Content</label>
-                <textarea class="form-control" rows="5" name="content"></textarea>
+                <textarea class="form-control" rows="7  " name="content"
+                placeholder="* 상세 위치 : &#13;&#10;* 모임 목적 : &#13;&#10;* 모임 일정 : "></textarea>
+
+            </div>
+            <!--            네이버 지도 api-->
+            <div id="map" style="width:50%;height:400px;"></div>
+            <label>주소 :  </label><input type="text" id="address">
+            <button id="addSearch">검색</button>
+            <button type="button" id="comfirm">확정</button>
+            <!--            네이버 지도 api-->
+
+            <div class="form-group">
+                <label >Member Count</label>
+                <select name="reqCnt">
+                    <option value="2">2</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
             </div>
 
             <div class="form-group">
                 <label >Meeting Costs</label>
-                <input class="form-control" name="meeting_costs">
+                <input class="form-control" name="costs" placeholder="회비">
             </div>
 
             <div class="form-group">
                 <label >Meeting Place</label>
-                <input class="form-control" name="meeting_place">
+                <input class="form-control" name="place" placeholder="모임 장소">
             </div>
 
             <div class="form-group">
                 <label>Writer Email</label>
-                <input type="email" class="form-control" name="writerNam"
+                <input type="email" class="form-control" name="writerName"
                 th:value="${session['user'].name}" readonly>
 
             </div>
 
             <input type="hidden" name="writerEmail" th:value="${session['user'].email}">
 
+            <input type="hidden" name="position" th:value="${session['user'].email}">
+
+
             <button type="submit" class="btn btn-primary"> Submit</button>
         </form>
+
+
+
+        <script>
+
+            $('#comfirm').click(function () {
+
+                var totalAdd = jibunAdd + " | " + roadAdd;
+                $("input[name=place]").val(totalAdd);
+                $("input[name=position]").val(pos);
+
+            })
+
+
+            <!--        네이버 지도 api (Geocode API, Reversegeocode API)-->
+
+            var jibunAdd;
+            var roadAdd;
+
+            var pos;
+
+            var map = new naver.maps.Map("map", {
+                center: new naver.maps.LatLng(37.3595316, 127.1052133),
+                zoom: 15,
+                mapTypeControl: true
+            });
+
+            var infoWindow = new naver.maps.InfoWindow({
+                anchorSkew: true
+            });
+
+            map.setCursor('pointer');
+
+            function searchCoordinateToAddress(latlng) {
+
+                infoWindow.close();
+
+                naver.maps.Service.reverseGeocode({
+                    coords: latlng,
+                    orders: [
+                        naver.maps.Service.OrderType.ADDR,
+                        naver.maps.Service.OrderType.ROAD_ADDR
+                    ].join(',')
+                }, function(status, response) {
+                    if (status === naver.maps.Service.Status.ERROR) {
+                        if (!latlng) {
+                            return alert('ReverseGeocode Error, Please check latlng');
+                        }
+                        if (latlng.toString) {
+                            return alert('ReverseGeocode Error, latlng:' + latlng.toString());
+                        }
+                        if (latlng.x && latlng.y) {
+                            return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
+                        }
+                        return alert('ReverseGeocode Error, Please check latlng');
+                    }
+
+
+                    pos = "lat:"+latlng.y +", lng:"+ latlng.x;
+                    console.log("마우스 "+pos);
+
+                    var address = response.v2.address,
+                        htmlAddresses = [];
+
+                    if (address.jibunAddress !== '') {
+                        jibunAdd = address.jibunAddress;
+                        htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
+                    }
+
+                    if (address.roadAddress !== '') {
+                        roadAdd = address.roadAddress;
+                        htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
+                    }
+
+                    infoWindow.setContent([
+                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                        '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
+                        htmlAddresses.join('<br />'),
+                        '</div>'
+                    ].join('\n'));
+
+
+                    infoWindow.open(map, latlng);
+                });
+            }
+
+            function searchAddressToCoordinate(address) {
+
+                naver.maps.Service.geocode({
+                    query: address
+                }, function(status, response) {
+                    if (status === naver.maps.Service.Status.ERROR) {
+                        if (!address) {
+                            return alert('Geocode Error, Please check address');
+                        }
+                        return alert('Geocode Error, address:' + address);
+                    }
+
+                    if (response.v2.meta.totalCount === 0) {
+                        return alert('No result.');
+                    }
+
+                    var htmlAddresses = [],
+                        item = response.v2.addresses[0],
+                        point = new naver.maps.Point(item.x, item.y);
+
+
+                    pos = "lat:"+item.y +", lng:"+ item.x;
+
+                    console.log("검색 "+pos);
+
+                    if (item.roadAddress) {
+                        roadAdd = item.roadAddress;
+                        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+                    }
+
+                    if (item.jibunAddress) {
+                        jibunAdd = item.jibunAddress;
+                        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+                    }
+
+                    if (item.englishAddress) {
+                        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+                    }
+
+                    infoWindow.setContent([
+                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                        '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
+                        htmlAddresses.join('<br />'),
+                        '</div>'
+                    ].join('\n'));
+
+                    map.setCenter(point);
+                    infoWindow.open(map, point);
+                });
+            }
+
+            function initGeocoder() {
+                if (!map.isStyleMapReady) {
+                    return;
+                }
+
+                map.addListener('click', function(e) {
+                    searchCoordinateToAddress(e.coord);
+                });
+
+                $('#address').on('keydown', function(e) {
+                    var keyCode = e.which;
+
+                    if (keyCode === 13) { // Enter Key
+                        searchAddressToCoordinate($('#address').val());
+                    }
+                });
+
+                $('#addSearch').on('click', function(e) {
+                    e.preventDefault();
+
+                    searchAddressToCoordinate($('#address').val());
+                });
+
+                searchAddressToCoordinate('정자동 178-1');
+            }
+
+            naver.maps.onJSContentLoaded = initGeocoder;
+            naver.maps.Event.once(map, 'init_stylemap', initGeocoder);
+            <!--        #네이버 지도 api (Geocode API, Reversegeocode API)-->
+
+        </script>
+
+
     </th:block>
 
 

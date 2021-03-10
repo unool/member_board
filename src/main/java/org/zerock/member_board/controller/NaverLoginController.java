@@ -244,6 +244,8 @@ public class NaverLoginController {
 //     * @throws IOException
 //     */
     private String requestToServer(String apiURL, String headerStr) throws IOException {
+
+
         URL url = new URL(apiURL);
         HttpURLConnection con = (HttpURLConnection)url.openConnection();
         con.setRequestMethod("GET");

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.zerock.member_board.entity.Board;
 
 import java.util.List;
 import java.util.function.Function;
@@ -39,13 +40,13 @@ public class PageResultDTO<DTO, EN> {
 
 
 
-    public PageResultDTO(Page<EN> result, Function<EN, DTO> fn){
+    public PageResultDTO(List<DTO> list, int totalPage, Pageable pageable){
 
-        dtoList = result.stream().map(fn).collect(Collectors.toList()); //Page<Entity> 형태의 DB 데이터를 DTO 리스트로 변환 (서비스에서 데이터 핸들링 하기위해)
+        dtoList = list; //Page<Entity> 형태의 DB 데이터를 DTO 리스트로 변환 (서비스에서 데이터 핸들링 하기위해)
 
-        totalPage = result.getTotalPages();
+        totalPage = totalPage;
 
-        makePageList(result.getPageable());
+        makePageList(pageable);
 
     }
 
@@ -69,7 +70,5 @@ public class PageResultDTO<DTO, EN> {
         next = totalPage > tempEnd;
 
         pageList = IntStream.rangeClosed(start, end).boxed().collect(Collectors.toList());
-
-
     }
 }

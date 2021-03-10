@@ -57,5 +57,9 @@ public class ReplyServiceImpl implements ReplyService{
         replyRepository.deleteById(rno);
 
     }
+
+
+
+
 }
 

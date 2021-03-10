@@ -30,6 +30,20 @@
     <link th:href="@{/modal/css/myModal_cs.css}" rel="stylesheet">
 
     <!--   ----- modal js, css-->
+
+
+
+
+
+
+<!-- 네이버 맵 api -->
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2rnn9z0mqa&submodules=geocoder"></script>
+
+<!-- #네이버 맵 api -->
+
+
+
+
 </head>
 
 <body>
@@ -75,7 +89,7 @@
                             <h0 class="nav-link">Guest님 환영합니다!</h0>
                         </div>
                         <div sec:authorize="isAuthenticated()">
-                            <h0 class="nav-link" >[[${session['user'].name}]]님 환영합니다!</h0>
+                            <h0 class="nav-link" >[[${session['user'].email}]]님 환영합니다!</h0>
                         </div>
 
 
@@ -123,7 +137,6 @@
 
 
 
-<!--~~~~ 추가 script-->
 
 </body>
 </th:block>

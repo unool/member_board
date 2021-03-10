@@ -3,7 +3,9 @@ package org.zerock.member_board.dto;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -22,6 +24,18 @@ public class BoardDTO {
     private String writerEmail;
 
     private String writerName;
+
+    private String costs;
+
+    private String place;
+
+    private Long curCnt;
+
+    private Long reqCnt;
+
+    private String position;
+
+    private List<String> members;
 
     private LocalDateTime regDate;
 

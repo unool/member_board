@@ -24,6 +24,16 @@ public class Board extends BaseEntity{
     @ManyToOne (fetch = FetchType.LAZY)
     private Member writer;
 
+    @Column(name = "meeting_costs")
+    private String costs;
+
+    @Column(name = "meeting_place")
+    private String place;
+
+    @Column(name = "position")
+    private String position;
+
+
     public void changeContent(String content){
         this.content = content;
     }
