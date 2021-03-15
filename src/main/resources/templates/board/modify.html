@@ -34,10 +34,19 @@
 
             <!--            네이버 지도 api-->
             <div id="map" style="width:50%;height:400px;"></div>
+
             <label>주소 :  </label><input type="text" id="address">
             <button id="addSearch">검색</button>
             <button type="button" id="comfirm">확정</button>
             <!--            네이버 지도 api-->
+
+
+            <div class="form-group">
+                <label>Limit Date</label>
+                <input id="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}"/><br>
+            </div>
+
+
 
             <div class="form-group">
                 <label >Meeting Costs</label>

@@ -3,6 +3,8 @@ package org.zerock.member_board.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.HashOperations;
@@ -17,11 +19,14 @@ import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
+import org.zerock.member_board.entity.Participation;
 import org.zerock.member_board.entity.User;
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.repository.AttendRepository;
 import org.zerock.member_board.repository.BoardRepository;
+import org.zerock.member_board.repository.ParticipationRepository;
 import org.zerock.member_board.repository.ReplyRepository;
+
 import org.zerock.member_board.service.util.MemberHandler;
 
 import javax.persistence.RollbackException;
@@ -40,12 +45,12 @@ public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
     private final AttendRepository attendRepository;
+    private final ParticipationRepository participationRepository;
+    private final ApplicationContext applicationContext;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long register(BoardDTO dto) {
-        Attend result = null;
-        Long bno = null;
 
         Board board = dtoToEntity(dto);
 
@@ -63,11 +68,9 @@ public class BoardServiceImpl implements BoardService{
                 .members(members)
                 .build();
 
-        result = attendRepository.save(attend);
+        attendRepository.save(attend);
 
-        bno = board.getBno();
-
-        return bno;
+        return savedBoard.getBno();
     }
 
 
@@ -124,10 +127,48 @@ public class BoardServiceImpl implements BoardService{
         {
             board.changeContent(boardDTO.getContent());
             board.changeTitle(boardDTO.getTitle());
+        }
+    }
+
+    @Override
+    public void confirm(Long bno) {
+        Board board = boardRepository.getOne(bno);
+
+        if(board != null)
+        {
+
+            if(board.getEnd() == true) //이미 처리됨..
+            {
+                return;
+            }
+
+            board.changeEnd(true);
+
+            Optional<Attend> result = attendRepository.findById(bno.toString());
+
+            Attend attend = (Attend) result.get();
+
+            List<String> members = attend.getMembers();
+
+            for(String email : members)
+            {
+                Board tempBoard = Board.builder()
+                        .bno(bno).build();
+
+                Member tempMember = Member.builder()
+                        .email(email)
+                        .build();
+
+                Participation participation = Participation.builder()
+                        .bno(tempBoard)
+                        .member(tempMember)
+                        .build();
+                participationRepository.save(participation);
+
+            }
+
 
         }
-
-
 
     }
 }

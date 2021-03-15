@@ -2,6 +2,7 @@ package org.zerock.member_board.dto;
 
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import java.time.LocalDateTime;
@@ -41,5 +42,9 @@ public class BoardDTO {
 
     private LocalDateTime modDate;
 
+    private String limitDate;
+
     private int replyCount;
+
+    private Boolean end;
 }

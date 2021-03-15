@@ -42,9 +42,9 @@ public class PageResultDTO<DTO, EN> {
 
     public PageResultDTO(List<DTO> list, int totalPage, Pageable pageable){
 
-        dtoList = list; //Page<Entity> 형태의 DB 데이터를 DTO 리스트로 변환 (서비스에서 데이터 핸들링 하기위해)
+        this.dtoList = list; //Page<Entity> 형태의 DB 데이터를 DTO 리스트로 변환 (서비스에서 데이터 핸들링 하기위해)
 
-        totalPage = totalPage;
+        this.totalPage = totalPage;
 
         makePageList(pageable);
 
@@ -52,13 +52,13 @@ public class PageResultDTO<DTO, EN> {
 
     private void makePageList(Pageable pageable){
 
-        this.page = pageable.getPageNumber() + 1;
+        this.page = pageable.getPageNumber() + 1; //0일 경우 /10일때 0이므로 +1
         this.size = pageable.getPageSize();
 
 
         //tmp end page
 
-        int tempEnd = (int)(Math.ceil(page/10.0)) * 10;
+        int tempEnd = (int)(Math.ceil(page/10.0)) * 10; // 총 게시물이 적을 경우 구상한 페이지 쪽수보다 적을 수 있기 때문에
 
 
         start = tempEnd - 9;

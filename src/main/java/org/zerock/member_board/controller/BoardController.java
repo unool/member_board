@@ -1,5 +1,6 @@
 package org.zerock.member_board.controller;
 
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,13 +12,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.zerock.member_board.dto.AttendDTO;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.OAuthAttributes;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.entity.Member;
+import org.zerock.member_board.repository.AttendRepository;
+import org.zerock.member_board.service.AttendService;
 import org.zerock.member_board.service.BoardService;
 
 import javax.servlet.http.HttpSession;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @RequestMapping("/board/")
 @Controller
@@ -26,12 +36,12 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private  AttendService attendService;
+
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model)
     {
-        //삭제
-        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
 
         model.addAttribute("result", boardService.getList(pageRequestDTO));
 
@@ -44,7 +54,10 @@ public class BoardController {
 
 
     @PostMapping("/register")
-    public String registerPost(BoardDTO dto, RedirectAttributes redirectAttributes){
+    public String registerPost(BoardDTO dto, RedirectAttributes redirectAttributes) throws ParseException {
+
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        LocalDateTime parsedLocalDateTime = LocalDateTime.parse(dto.getLimitDate());
 
         System.out.println("<> ===========" + dto);
         Long bno = boardService.register(dto);
@@ -59,8 +72,11 @@ public class BoardController {
                      Long bno, Model model)
     {
         BoardDTO boardDTO = boardService.get(bno);
+//        AttendDTO attendDTO = attendService.getAttend(bno);
+
 
         model.addAttribute("dto", boardDTO);
+//        model.addAttribute("attend", attendDTO);
     }
 
 
@@ -89,5 +105,23 @@ public class BoardController {
         redirectAttributes.addAttribute("bno", dto.getBno());
 
         return "redirect:/board/read";
+    }
+
+    @GetMapping("/confirm")
+    public String confirm(Long bno, @ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
+                          RedirectAttributes redirectAttributes)
+    {
+        boardService.confirm(bno);
+
+        redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
+        redirectAttributes.addAttribute("type", pageRequestDTO.getType());
+        redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+        redirectAttributes.addAttribute("bno", bno);
+        return "redirect:/board/read";
+    }
+
+    @GetMapping("/test")
+    public void test(){
+        System.out.println("test");
     }
 }

@@ -4,6 +4,8 @@ package org.zerock.member_board.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @ToString(exclude = "writer")
@@ -33,6 +35,12 @@ public class Board extends BaseEntity{
     @Column(name = "position")
     private String position;
 
+    @Column(name = "limitdate")
+    private LocalDateTime limitDate;
+
+    @Column(name = "end")
+    private Boolean end;
+
 
     public void changeContent(String content){
         this.content = content;
@@ -40,5 +48,9 @@ public class Board extends BaseEntity{
 
     public void changeTitle(String title){
         this.title = title;
+    }
+
+    public void changeEnd(Boolean end){
+        this.end = end;
     }
 }

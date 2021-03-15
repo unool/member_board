@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+
+    <th:block th:fragment="content">
+
+        <h1 class="mt-4"> Board Read Page </h1>
+
+        <input type="hidden" name="page" th:value="${requestDTO.page}">
+        <input type="hidden" name="type" th:value="${requestDTO.type}">
+        <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
+
+
+        <div class="form-group">
+            <label>Title</label>
+            <input type="text" class="form-control" name="title"
+                   th:value="${dto.title}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Content</label>
+            <textarea class="form-control" rows="5" name="content"
+                      readonly>[[${dto.content}]]</textarea>
+        </div>
+
+        <div class="form-group" th:if="${dto.imageList.size() > 0}">
+            <span th:each="imageDTO : ${dto.imageList}">
+                 <img th:src="|/review/getPhoto?fileName=${imageDTO.getThumImgURL()}|">
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label>Writer</label>
+            <input type="text" class="form-control" name="writer"
+                   th:value="${dto.writerEmail}" readonly>
+        </div>
+
+
+
+        <div class="form-group">
+            <label>RegDate</label>
+            <input type="text" class="form-control" name="regDate"
+                   th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>ModDate</label>
+            <input type="text" class="form-control" name="modDate"
+                   th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+        </div>
+
+
+        <span sec:authorize="isAuthenticated()">
+            <a th:href="@{/board/modify(bno = ${dto.bno}, page = ${requestDTO.page}, type=${requestDTO.type},
+                keyword = ${requestDTO.keyword})}">
+            <button type="button" class="btn btn-primary" id="modiBtn" th:if="${session['user'].email} == ${dto.writerEmail}"> Modify</button>
+                </a>
+        </span>
+
+
+
+
+
+        <a th:href="@{/review/reviewList( page = ${requestDTO.page}, type=${requestDTO.type},
+                keyword = ${requestDTO.keyword})}">
+            <button type="button" class="btn btn-info"> List</button>
+
+        </a>
+
+        <span id="likePart"></span>
+
+
+        <script>
+
+
+            $(document).ready(function(){
+                getLikeData();
+
+            })
+
+            function clickLike(){
+                var str = "";
+
+                var header = {"Content-Type" : "application/x-www-form-urlencoded"
+                    , "X-HTTP-Method-Override" : "Post"
+                }
+                var data = {
+                    rro : [[${dto.rro}]]
+                }
+
+                $.ajax({
+                    url:'/review/clickLike',
+                    header : header,
+                    data : data,
+                    type : 'Post',
+                    dataType : 'text'
+                    ,success : function(result) {
+                        console.log("clickLike")
+                        console.log(result);
+                        getLikeData();
+                    }
+                    ,error : function(error){
+                        console.log(error);
+
+                    }
+                })
+
+            }
+
+
+
+            function getLikeData(){
+
+                var str = "";
+
+                var header = {"Content-Type" : "application/x-www-form-urlencoded"
+                    , "X-HTTP-Method-Override" : "Post"
+                }
+                var data = {
+                    rro : [[${dto.rro}]]
+                }
+                $.ajax({
+                    url:'/review/getLikeData',
+                    header : header,
+                    data : data,
+                    type : 'Post',
+                    dataType : 'json'
+                    ,success : function(result) {
+                        console.log("getLikeData")
+                        if(result.contains)
+                        {
+                            str += '<a href="javascript:void(0)" onclick="clickLike()">';
+                            str += '<img src="/img/icons8-facebook-like-24_fill.png">';
+                            str += '</a>';
+                        }
+                        else
+                        {
+                            str += '<a href="javascript:void(0)" onclick="clickLike()">';
+                            str += '<img src="/img/icons8-facebook-like-24_empty.png">';
+                            str += '</a>';
+                        }
+
+                        str += '<small>' + result.likeCnt + '</small>';
+
+
+                        $('#likePart').html(str);
+
+                    }
+                    ,error : function(error){
+                        console.log(error);
+
+                    }
+                })
+
+            }
+
+
+        </script>
+
+    </th:block>
+
+
+</th:block>

@@ -1,5 +1,6 @@
 package org.zerock.member_board.service.util;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -16,6 +17,8 @@ public class MemberHandler {
                 .getPrincipal();
 
         String email = "";
+
+
         if(object.getClass().getName().equals(Member.class.getName()))
         {
             Member member = (Member) object;
@@ -28,6 +31,9 @@ public class MemberHandler {
         }
         else
         {
+
+//            System.out.println("일부러 exception");
+//            throw new RuntimeException();
             //예외처리
         }
 

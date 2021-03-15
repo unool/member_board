@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.zerock.member_board.dto.AttendDTO;
 import org.zerock.member_board.dto.MemberDTO;
 import org.zerock.member_board.service.AttendService;
+import org.zerock.member_board.service.util.MemberHandler;
+
+import java.util.HashMap;
 
 
 @RequiredArgsConstructor
@@ -20,18 +23,31 @@ public class AttendController {
 
     @ResponseBody
     @PostMapping ("/getAttend")
-    public AttendDTO getAttend(Long bno){
+    public HashMap<String, Object> getAttend(Long bno){
 
+        AttendDTO attendDTO = attendService.getAttend(bno);
+        HashMap<String, Object> hash = new HashMap<>();
+        String curEmail = MemberHandler.GetMemberEmail();
+        hash.put("AttendDTO", attendDTO);
+        hash.put("ConnectedEmail", curEmail);
 
-        return   attendService.getAttend(bno);
+        return hash;
+//        return   attendService.getAttend(bno);
     }
 
     @ResponseBody
     @PostMapping ("/attendMember")
-    public ResponseEntity<AttendDTO> attendMember(Long bno, String attendEmail){
+    public ResponseEntity<HashMap<String, Object>> attendMember(Long bno, String attendEmail){
+
+
 
         AttendDTO attendDTO = attendService.attendMember(bno, attendEmail);
+        HashMap<String, Object> hash = new HashMap<>();
+        String curEmail = MemberHandler.GetMemberEmail();
+        hash.put("AttendDTO", attendDTO);
+        hash.put("ConnectedEmail", curEmail);
 
-        return new ResponseEntity<>(attendDTO, HttpStatus.OK);
+
+        return new ResponseEntity<>(hash, HttpStatus.OK);
     }
 }

@@ -22,8 +22,6 @@
     <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 
-<!--    add my css-->
-    <link th:href="@{/css/custom_css.css}" rel="stylesheet">
 
 <!--    modal css-->
 
@@ -32,6 +30,8 @@
     <!--   ----- modal js, css-->
 
 
+    <!--    테스트-->
+    <link th:href="@{/css/custom-css.css}" rel="stylesheet">
 
 
 
@@ -62,7 +62,7 @@
 
             </div>
             <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Metting Board</a>
-            <a th:href="@{#}" class="list-group-item list-group-item-action bg-light">Metting Review</a>
+            <a th:href="@{/review/reviewList}" class="list-group-item list-group-item-action bg-light">Metting Review</a>
 
 
 
@@ -116,8 +116,10 @@
         </nav>
 
         <div class="container-fluid">
+
            <th:block th:replace = "${content}"></th:block>
         </div>
+
     </div>
     <!-- /#page-content-wrapper -->
 

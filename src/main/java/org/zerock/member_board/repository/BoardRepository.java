@@ -24,4 +24,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "left outer join Reply r on b = r.board " +
             "where b.bno = :bno")
     Object getBoardByBno(@Param("bno") Long bno);
+
+
+
 }

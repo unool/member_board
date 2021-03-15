@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/replies/**","/board/list","/board/read","/css/**","/login/**","/vendor/**","/modal/**","/member/**","/login/**").permitAll()
+                .antMatchers("/", "/replies/**","/board/list","/board/read","/css/**","/login/**","/vendor/**","/modal/**","/member/**","/login/**","/review/**","/img/**","/attend/getAttend").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

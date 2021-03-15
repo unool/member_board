@@ -12,11 +12,11 @@
         <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
 
 
-        <div class="form-group">
-            <label>Bno</label>
-            <input type="text" class="form-control" name="gno"
-                   th:value="${dto.bno}" readonly>
-        </div>
+<!--        <div class="form-group">-->
+<!--            <label>Bno</label>-->
+<!--            <input type="text" class="form-control" name="gno"-->
+<!--                   th:value="${dto.bno}" readonly>-->
+<!--        </div>-->
 
         <div class="form-group">
             <label>Title</label>
@@ -34,7 +34,18 @@
 <!--        참가 관련-->
         <div id="attendDiv"></div>
 
+
+
+
+
         <div id="map" style="width:50%;height:400px;"></div>
+
+
+        <div class="form-group">
+            <label>Limit Date</label>
+            <input id="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}" readonly>
+        </div>
+
 
         <div class="form-group">
             <label >Meeting Costs</label>
@@ -78,8 +89,10 @@
 
 
 
-
-        <button type="button" class="btn btn-info"> List</button>
+        <a th:href="@{/board/list(page=${requestDTO.page}, size=${requestDTO.size}
+        , type=${requestDTO.type}, keyword=${requestDTO.keyword})}">
+            <button type="button" class="btn btn-info"> List</button>
+        </a>
 
 
         <div>
@@ -100,147 +113,157 @@
         </div>
 
 
+<!--    getAttend에서 로그인 여부 확인 위해    -->
+        <div sec:authorize="isAuthenticated()">
+            <input type="hidden" class="connectedEmail" name="connectedEmail" th:value="${session['user'].email}">
+        </div>
+        <div sec:authorize="isAnonymous()">
+            <input type="hidden" class="connectedEmail" name="connectedEmail" value="false">
+        </div>
+<!--            -->
+
+
         <script th:inline="javascript">
+            console.log("tv");
+  //
 
-            var addrs = [[${dto.place}]];
-            var addr = addrs.split('|');
+  var addrs = [[${dto.place}]];
+  var addr = addrs.split('|');
 
-            var map = new naver.maps.Map("map", {
-                center: new naver.maps.LatLng(37.3595316, 127.1052133),
-                zoom: 15,
-                mapTypeControl: true
-            });
+  var map = new naver.maps.Map("map", {
+      center: new naver.maps.LatLng(37.3595316, 127.1052133),
+      zoom: 15,
+      mapTypeControl: true
+  });
 
-            var infoWindow = new naver.maps.InfoWindow({
-                anchorSkew: true
-            });
+  var infoWindow = new naver.maps.InfoWindow({
+      anchorSkew: true
+  });
 
-            map.setCursor('pointer');
+  map.setCursor('pointer');
 
-            function searchCoordinateToAddress(latlng) {
+  function searchCoordinateToAddress(latlng) {
 
-                infoWindow.close();
+      infoWindow.close();
 
-                naver.maps.Service.reverseGeocode({
-                    coords: latlng,
-                    orders: [
-                        naver.maps.Service.OrderType.ADDR,
-                        naver.maps.Service.OrderType.ROAD_ADDR
-                    ].join(',')
-                }, function(status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!latlng) {
-                            return alert('ReverseGeocode Error, Please check latlng');
-                        }
-                        if (latlng.toString) {
-                            return alert('ReverseGeocode Error, latlng:' + latlng.toString());
-                        }
-                        if (latlng.x && latlng.y) {
-                            return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
-                        }
-                        return alert('ReverseGeocode Error, Please check latlng');
-                    }
-
-
-                    pos = "lat:"+latlng.y +", lng:"+ latlng.x;
-
-                    var address = response.v2.address,
-                        htmlAddresses = [];
-
-                    if (address.jibunAddress !== '') {
-                        jibunAdd = address.jibunAddress;
-                        htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
-                    }
-
-                    if (address.roadAddress !== '') {
-                        roadAdd = address.roadAddress;
-                        htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
+      naver.maps.Service.reverseGeocode({
+          coords: latlng,
+          orders: [
+              naver.maps.Service.OrderType.ADDR,
+              naver.maps.Service.OrderType.ROAD_ADDR
+          ].join(',')
+      }, function(status, response) {
+          if (status === naver.maps.Service.Status.ERROR) {
+              if (!latlng) {
+                  return alert('ReverseGeocode Error, Please check latlng');
+              }
+              if (latlng.toString) {
+                  return alert('ReverseGeocode Error, latlng:' + latlng.toString());
+              }
+              if (latlng.x && latlng.y) {
+                  return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
+              }
+              return alert('ReverseGeocode Error, Please check latlng');
+          }
 
 
-                    infoWindow.open(map, latlng);
-                });
-            }
+          pos = "lat:"+latlng.y +", lng:"+ latlng.x;
 
-            function searchAddressToCoordinate(address) {
+          var address = response.v2.address,
+              htmlAddresses = [];
 
-                naver.maps.Service.geocode({
-                    query: address
-                }, function(status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!address) {
-                            return alert('Geocode Error, Please check address');
-                        }
-                        return alert('Geocode Error, address:' + address);
-                    }
+          if (address.jibunAddress !== '') {
+              jibunAdd = address.jibunAddress;
+              htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
+          }
 
-                    if (response.v2.meta.totalCount === 0) {
-                        return alert('No result.');
-                    }
+          if (address.roadAddress !== '') {
+              roadAdd = address.roadAddress;
+              htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
+          }
 
-                    var htmlAddresses = [],
-                        item = response.v2.addresses[0],
-                        point = new naver.maps.Point(item.x, item.y);
+          infoWindow.setContent([
+              '<div style="padding:10px;min-width:200px;line-height:150%;">',
+              '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
+              htmlAddresses.join('<br />'),
+              '</div>'
+          ].join('\n'));
 
 
-                    pos = "lat:"+item.y +", lng:"+ item.x;
+          infoWindow.open(map, latlng);
+      });
+  }
+
+  function searchAddressToCoordinate(address) {
+
+      naver.maps.Service.geocode({
+          query: address
+      }, function(status, response) {
+          if (status === naver.maps.Service.Status.ERROR) {
+              if (!address) {
+                  return alert('Geocode Error, Please check address');
+              }
+              return alert('Geocode Error, address:' + address);
+          }
+
+          if (response.v2.meta.totalCount === 0) {
+              return alert('No result.');
+          }
+
+          var htmlAddresses = [],
+              item = response.v2.addresses[0],
+              point = new naver.maps.Point(item.x, item.y);
 
 
-                    if (item.roadAddress) {
-                        roadAdd = item.roadAddress;
-                        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
-                    }
-
-                    if (item.jibunAddress) {
-                        jibunAdd = item.jibunAddress;
-                        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
-                    }
-
-                    if (item.englishAddress) {
-                        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
-
-                    map.setCenter(point);
-                    infoWindow.open(map, point);
-                });
-            }
+          pos = "lat:"+item.y +", lng:"+ item.x;
 
 
-            function initGeocoder() {
+          if (item.roadAddress) {
+              roadAdd = item.roadAddress;
+              htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+          }
 
-                if (!map.isStyleMapReady) {
-                    return;
-                }
+          if (item.jibunAddress) {
+              jibunAdd = item.jibunAddress;
+              htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+          }
 
-                map.addListener('click', function(e) {
-                    searchCoordinateToAddress(e.coord);
-                });
+          if (item.englishAddress) {
+              htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+          }
+
+          infoWindow.setContent([
+              '<div style="padding:10px;min-width:200px;line-height:150%;">',
+              '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
+              htmlAddresses.join('<br />'),
+              '</div>'
+          ].join('\n'));
+
+          map.setCenter(point);
+          infoWindow.open(map, point);
+      });
+  }
 
 
+  function initGeocoder() {
 
-                searchAddressToCoordinate(addr[0]);
-            }
+      if (!map.isStyleMapReady) {
+          return;
+      }
+
+      map.addListener('click', function(e) {
+          searchCoordinateToAddress(e.coord);
+      });
 
 
 
+      searchAddressToCoordinate(addr[0]);
+  }
 
 
 
 
+  //
 
             function formatTime(str){
                 var date = new Date(str);
@@ -328,6 +351,7 @@
 
             function loadJSONData() {
 
+                console.log("loadJSONData1111");
                 var bno = [[${dto.bno}]];
 
                 var listGroup = $(".replyList");
@@ -353,6 +377,8 @@
 
                     listGroup.html(str);
                 })
+
+                console.log("loadJSONData2222");
             }
 
 
@@ -395,13 +421,17 @@
             })
 
 
-            function getAttend(){
-                var userEmail = [[${session['user'].email}]];
+            function getAttend(currentConnectedEmail){
+
+                console.log("getAttend111");
+
+
                 var writerEmail = [[${dto.writerEmail}]];
                 var headers = {"Content-Type" : "application/x-www-form-urlencoded"
                     , "X-HTTP-Method-Override" : "POST"};
 
                 var str ="";
+
                 var data = {
                     bno : [[${dto.bno}]]
                 }
@@ -411,38 +441,75 @@
                     , data : data
                     , type : 'POST'
                     , dataType : 'json'
-                    , success: function (attend){
+                    , success: function (result){
+                        var attend = result['AttendDTO'];
+                        var currentConnEmail = result['ConnectedEmail'];
+
                         console.log("정상22");
+
                         str += '<div class="form-group">';
                         str += '<input class="form-control-sm" id="attendState" value="'+attend.currentCnt+
                             '/'+attend.requiredCnt+'" readonly>';
                         str += '</div>';
 
-                        if(writerEmail != userEmail)
-                        {
-                            if(attend.members.includes(userEmail))
-                            {
-                                str += '<div class="form-group">';
-                                str += '<button type="button" class="btn btn-danger" id="absentBtn" onclick="attendMember()">' +
-                                    '불참하기</button>';
-                                str += '</div>';
+                        var end = [[${dto.end}]];
 
+                        if(end == true)
+                        {
+                            str += '<button type="button" class="btn btn-danger" >마감</button>';
+                        }
+                        else
+                        {
+                            var paraEmail = "'"+currentConnEmail+"'";
+
+                            var bno = [[${dto.bno}]];
+                            var page = [[${requestDTO.page}]];
+                            var type = [[${requestDTO.type}]];
+                            var keyword = [[${requestDTO.keyword}]];
+
+                            if(currentConnectedEmail == writerEmail)
+                            {
+                                str += '<a href="/board/confirm?bno='+ bno + '&page=' +
+                                    page +'&type='+ type +'&keyword=' +
+                                    keyword + ')">';
+                                str += '<button type="button" class="btn btn-primary" id="confirmBtn">확정</button>';
+                                str += '</a>';
                             }
                             else
                             {
-                                if(attend.currentCnt < attend.requiredCnt)
+                                if(currentConnectedEmail != "")
                                 {
-                                    str += '<div class="form-group">';
-                                    str += '<button type="button" class="btn btn-primary" id="attendBtn" onclick="attendMember()">' +
-                                        '참가하기</button>';
-                                    str += '</div>';
+                                    if(attend.members.includes(currentConnectedEmail)) {
+                                        str += '<div class="form-group">';
+                                        str += '<button type="button" class="btn btn-danger" id="absentBtn" onclick="attendMember('+paraEmail+')">' +
+                                            '불참하기</button>';
+                                        str += '</div>';
+
+                                    }
+                                    else
+                                    {   var curCnt = parseInt(attend.currentCnt);
+                                        var reqCnt = parseInt(attend.requiredCnt);
+                                        if(curCnt < reqCnt)
+                                        {
+                                            console.log(currentConnectedEmail);
+                                            str += '<div class="form-group">';
+                                            str += '<button type="button" class="btn btn-primary" id="attendBtn" ' +
+                                                'onclick="attendMember('+paraEmail+')">' +
+                                                '참가하기</button>';
+                                            str += '</div>';
+                                        }
+                                    }
+
                                 }
                             }
 
                         }
 
 
+
+                        console.log("직전");
                         $('#attendDiv').html(str);
+
                     }
                     ,error : function (error){
                         console.log("에러 : " + error);
@@ -454,13 +521,13 @@
 
 
 
-            function attendMember(){
+            function attendMember(email){
                 var headers = {"Content-Type" : "application/x-www-form-urlencoded"
                     , "X-HTTP-Method-Override" : "POST"};
 
                 var data = {
                     bno : [[${dto.bno}]],
-                    attendEmail : [[${session['user'].email}]]
+                    attendEmail : email
                 }
                 var str = "";
                 $.ajax({
@@ -469,9 +536,10 @@
                     , data : data
                     , type : 'POST'
                     , dataType : 'json'
-                    , success: function (attend){
-                        console.log("정상");
-                        getAttend();
+                    , success: function (result){
+                        var attend = result['AttendDTO'];
+                        var currentConnEmail = result['ConnectedEmail'];
+                        getAttend(currentConnEmail);
                     }
                     ,error : function (error){
                         console.log("에러 : " + error);
@@ -491,9 +559,25 @@
 
 
             $(document).ready(function(){
-
+                console.log("ready1111");
                 loadJSONData();
-                getAttend();
+
+                var connectedEmail = $('.connectedEmail').val().toString();
+
+
+
+                if(connectedEmail != "false")
+                {
+                    email = connectedEmail;
+                }
+                else
+                {
+                    email = "";
+                }
+
+                getAttend(email);
+
+                console.log("ready222");
             })
 
 

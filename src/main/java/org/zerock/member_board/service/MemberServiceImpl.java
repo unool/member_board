@@ -36,6 +36,8 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
             member = result.get();
 
             httpSession.setAttribute("user",new SessionUser(member));
+
+
         }
         else
         {

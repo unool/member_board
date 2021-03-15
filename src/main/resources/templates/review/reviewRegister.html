@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+
+    <th:block th:fragment="content">
+        <h1 class="mt-4">Review Register Page</h1>
+
+        <form th:action="@{/review/reviewRegister}" th:method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label >Attend List</label>
+                <select name="bno" class="form-control">
+                    <span th:each="dto : ${dtoList}">
+                        <option th:value="${dto.bno}">[[${dto.bno}]]:[[${dto.title}]]</option>
+                    </span>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label >Title</label>
+                    <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">
+            </div>
+
+            <div class="form-group">
+                <label >Content</label>
+                <textarea class="form-control" rows="7  " name="content"
+                          placeholder="후기를 적어주세요"></textarea>
+
+            </div>
+
+            <div class="form-group">
+                <label>Photo</label>
+                <div class="custom-file">
+                <input name="photos" class="custom-file-input files" accept="image/*" type="file" onchange="previewImage(this)"  multiple>
+                <label class="custom-file-label" data-browse="Browse"></label>
+
+                </div>
+            </div>
+
+            <div id="preview" > </div>
+
+            <div class="form-group">
+                <label>Writer Email</label>
+                <input type="email" class="form-control" name="writerEmail"
+                       th:value="${session['user'].email}" readonly>
+
+            </div>
+
+
+
+
+            <button type="submit" class="btn btn-primary"> Submit</button>
+        </form>
+
+        <script>
+            function previewImage(f){
+
+                document.getElementById('preview').innerHTML = '';
+
+                var file = f.files;
+
+
+                for(var i = 0; i < file.length ; i++)
+                {
+
+
+
+                    // 확장자 체크
+                    if(!/\.(gif|jpg|jpeg|png)$/i.test(file[i].name)){
+                        alert('gif, jpg, png 파일만 선택해 주세요.\n\n현재 파일 : ' + file[i].name);
+
+                        // 선택한 파일 초기화
+                        f.outerHTML = f.outerHTML;
+
+                        document.getElementById('preview').innerHTML = '';
+
+                    }
+                    else {
+
+                        // FileReader 객체 사용
+                        var reader = new FileReader();
+
+                        // 파일 읽기가 완료되었을때 실행
+                        reader.onload = function(rst){
+                            document.getElementById('preview').innerHTML += '<img src="' + rst.target.result + '">';
+                        }
+
+                        // 파일을 읽는다
+                        reader.readAsDataURL(file[i]);
+
+                    }
+                }
+
+            }
+
+
+
+        </script>
+
+
+    </th:block>
+
+
+</th:block>

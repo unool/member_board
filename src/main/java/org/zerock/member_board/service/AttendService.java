@@ -19,7 +19,9 @@ public class AttendService {
 
     private final AttendRepository attendRepository;
 
+
     public AttendDTO getAttend(Long bno){
+
         Optional<Attend> result = attendRepository.findById(bno.toString());
 
         AttendDTO attendDTO = null;
@@ -27,6 +29,12 @@ public class AttendService {
         {
             try {
                 Attend attend = result.get();
+
+                //삭제
+                for(String mem : attend.getMembers())
+                {
+                    System.out.println(mem);
+                }
 
                 attendDTO = entityToDTO(attend);
 
@@ -51,7 +59,17 @@ public class AttendService {
             return null;
         }
 
+        if(attendEmail == "null")
+        {
+            return null;
+        }
+        if(attendEmail == "annoymous")
+        {
+            return null;
+
+        }
         Attend attend = result.get();
+
 
 
 
