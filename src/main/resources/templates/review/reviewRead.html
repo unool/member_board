@@ -12,6 +12,9 @@
         <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
 
 
+        <input type="hidden" name="rro" th:value="${dto.rro}" readonly>
+
+
         <div class="form-group">
             <label>Title</label>
             <input type="text" class="form-control" name="title"
@@ -52,13 +55,11 @@
 
 
         <span sec:authorize="isAuthenticated()">
-            <a th:href="@{/board/modify(bno = ${dto.bno}, page = ${requestDTO.page}, type=${requestDTO.type},
+            <a th:href="@{/review/reviewModify(rro = ${dto.rro}, page = ${requestDTO.page}, type=${requestDTO.type},
                 keyword = ${requestDTO.keyword})}">
             <button type="button" class="btn btn-primary" id="modiBtn" th:if="${session['user'].email} == ${dto.writerEmail}"> Modify</button>
                 </a>
         </span>
-
-
 
 
 

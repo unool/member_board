@@ -4,7 +4,10 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.security.core.parameters.P;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Review;
 
 import java.util.List;
@@ -22,5 +25,12 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("select r,max(ri) from Review r left join ReviewImage ri on ri.review = r") //모든 이미지 가져오게
     Page<Object[]> getReviewWithAllReviewImage(Pageable pageable);
 
+
+    @Transactional
+    @Modifying
+    @Query("update Review r set r.title = :title , r.content = :content where r.rro = :rro")
+    void updateReviewTitleContent(@Param("title") String title,
+                                  @Param("content") String content,
+                                  @Param("rro") Long rro);
 
 }

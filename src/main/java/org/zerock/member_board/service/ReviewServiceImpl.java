@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
@@ -24,7 +23,6 @@ import org.zerock.member_board.entity.redis.Like;
 import org.zerock.member_board.repository.*;
 import org.zerock.member_board.service.util.MemberHandler;
 
-import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +32,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Function;
 
 
 @RequiredArgsConstructor
@@ -56,30 +53,23 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public Long register(ReviewDTO dto , MultipartFile[] photos) {
 
-        List<Map<String,String>> reviewImgValues = makeImageFile(photos); //파일 저장
-
-        if(reviewImgValues == null )
-        {
-            return null;
+        List<Map<String,String>> reviewImgValues = null;
+        if(photos != null){
+            if(photos.length > 0 && !photos[0].isEmpty()) {//아무 파일도 안보내도 기본적으로 0인덱스가 들어가있음...
+                reviewImgValues = makeImageFile(photos); //파일 저장
+            }
         }
 
         Review review = reviewRepository.save(dtoToEntity(dto));
 
-        for(Map<String,String> values : reviewImgValues){
+        if(photos != null)
+        {
+            if(photos.length > 0 && !photos[0].isEmpty()) {
 
-            Review tempReview = Review.builder()
-                    .rro(review.getRro())
-                    .build();
-
-            ReviewImage reviewImage = ReviewImage.builder()
-                    .uuid(values.get("uuid"))
-                    .imgName(values.get("imgName"))
-                    .path(values.get("path"))
-                    .review(tempReview)
-                    .build();
-
-            reviewImageRepository.save(reviewImage);
+            saveReviewImage(review.getRro(), reviewImgValues);
+            }
         }
+
 
         //좋아요 레디스 부분 (레디스는 현재 트랙잭션 처리가 안되므로 안정적인 가장 마지막 단계에서 처리..
 
@@ -159,8 +149,59 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void modify(ReviewDTO reviewDTO) {
+    public void modify(ReviewDTO reviewDTO, MultipartFile[] photos) {
 
+        List<ReviewImage> result = reviewImageRepository.findByReviewRro(reviewDTO.getRro());
+
+        if(result.size() > 0) //애초에 기존 사진이 없다면 삭제할것도 없음.. //하나도 없을때 테스트해볼것
+        {
+            boolean[] existImage = new boolean[result.size()]; //result와 같은 사이즈로 생성!
+            Arrays.fill(existImage, false);
+
+            List<ReviewImageDTO> dtoList = reviewDTO.getImageList();
+            if(dtoList != null)
+            {
+                for(int i = 0; i < dtoList.size(); i++)
+                {
+                    Long inum = dtoList.get(i).getInum(); //안 지워진 이미지들의 inum
+
+                    for(int j = 0; j < result.size(); j++)
+                    {
+                        ReviewImage ri = result.get(j);
+                        if(ri.getInum() == inum)
+                        {
+                            existImage[j] = true;
+                        }
+                    }
+                }
+            }
+            for(int i = result.size()-1; i >= 0; i--)
+            {
+                if(existImage[i] == false)
+                {
+                    ReviewImage ri = result.get(i);
+                    reviewImageRepository.delete(ri);
+                    removeFile(ri.getPath(),ri.getUuid(),ri.getImgName());
+                }
+            }
+        }
+        //ReivewImage 삭제 완료
+
+        if(photos != null )
+        {
+
+            if(photos.length > 0 && !photos[0].isEmpty())
+            {
+                List<Map<String,String>> reviewImgValues = makeImageFile(photos); //파일 저장
+
+                saveReviewImage(reviewDTO.getRro(), reviewImgValues);
+                //새로 첨부한 이미지 추가 완료
+            }
+        }
+
+
+
+        reviewRepository.updateReviewTitleContent(reviewDTO.getTitle(), reviewDTO.getContent(), reviewDTO.getRro());
 
     }
 
@@ -290,67 +331,106 @@ public class ReviewServiceImpl implements ReviewService{
 
         if(photos != null)
         {
-            for(MultipartFile photo : photos)
+            if(photos.length > 0)
             {
-                String dd = photo.getContentType();
-                if(photo.getContentType().startsWith("image") == false)
+                for(MultipartFile photo : photos)
                 {
-                    logger.debug("not image type..");
-                    return null;
+
+                    if(photo.getContentType().startsWith("image") == false)
+                    {
+                        logger.debug("not image type..");
+                        return null;
+                    }
+
+                    HashMap<String,String> values = new HashMap<>();
+
+                    String originalName = photo.getOriginalFilename();
+                    String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1); //마지막 경로 다음 인덱스 구해서 해당 인덱스에서부터 서브스트링
+
+
+                    System.out.println("originalName: " + originalName);
+                    System.out.println("fileName: " + fileName);
+
+
+                    //폴더 생성
+                    String folderPath = makeFolder();
+
+
+                    //UUID 발생
+                    String uuid = UUID.randomUUID().toString();
+
+
+                    String path = uploadPath + File.separator + folderPath + File.separator;
+                    String saveName = path + uuid
+                            + "_" + fileName;
+
+                    Path savePath = Paths.get(saveName);
+
+
+
+                    try{
+
+                        photo.transferTo(savePath);
+
+                        String thumbnailName = uploadPath + File.separator + folderPath + File.separator
+                                + "s_" + uuid + "_" + fileName;
+
+                        File thumbnailFile = new File(thumbnailName);
+
+                        Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 200, 200);
+
+                        values.put("uuid",uuid);
+                        values.put("imgName",fileName);
+                        values.put("path",path);
+
+                        list.add(values);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
-
-                HashMap<String,String> values = new HashMap<>();
-
-                String originalName = photo.getOriginalFilename();
-                String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1); //마지막 경로 다음 인덱스 구해서 해당 인덱스에서부터 서브스트링
-
-
-                System.out.println("originalName: " + originalName);
-                System.out.println("fileName: " + fileName);
-
-
-                //폴더 생성
-                String folderPath = makeFolder();
-
-
-                //UUID 발생
-                String uuid = UUID.randomUUID().toString();
-
-
-                String path = uploadPath + File.separator + folderPath + File.separator;
-                String saveName = path + uuid
-                        + "_" + fileName;
-
-                Path savePath = Paths.get(saveName);
-
-
-
-                try{
-                    photo.transferTo(savePath);
-
-                    String thumbnailName = uploadPath + File.separator + folderPath + File.separator
-                            + "s_" + uuid + "_" + fileName;
-
-                    File thumbnailFile = new File(thumbnailName);
-
-                    Thumbnailator.createThumbnail(savePath.toFile(), thumbnailFile, 200, 200);
-
-                    values.put("uuid",uuid);
-                    values.put("imgName",fileName);
-                    values.put("path",path);
-
-                    list.add(values);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
+
 
 
         }
         return list;
     }
+
+    public boolean removeFile(String path, String uuid, String imgName){
+
+        File file = new File(path + uuid + "_" + imgName);
+        boolean result = file.delete();
+
+        File thumbnail = new File(file.getParent(), "s_" + file.getName());
+
+        result = thumbnail.delete();
+
+        return true;
+    }
+
+    public boolean saveReviewImage(Long rro, List<Map<String,String>> attr)
+    {
+        for(Map<String,String> values : attr){
+
+            Review tempReview = Review.builder()
+                    .rro(rro)
+                    .build();
+
+            ReviewImage reviewImage = ReviewImage.builder()
+                    .uuid(values.get("uuid"))
+                    .imgName(values.get("imgName"))
+                    .path(values.get("path"))
+                    .review(tempReview)
+                    .build();
+
+            reviewImageRepository.save(reviewImage);
+        }
+
+        return true;
+    }
+
 
     @Override
     public ResponseEntity<byte[]> getPhotoFile(String fileName) {

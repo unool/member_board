@@ -7,6 +7,8 @@
 
         <form th:action="@{/review/reviewRegister}" th:method="post" enctype="multipart/form-data">
 
+
+
             <div class="form-group">
                 <label >Attend List</label>
                 <select name="bno" class="form-control">
@@ -37,7 +39,7 @@
                 </div>
             </div>
 
-            <div id="preview" > </div>
+            <div class="form-group" id="preview" > </div>
 
             <div class="form-group">
                 <label>Writer Email</label>
@@ -82,7 +84,7 @@
 
                         // 파일 읽기가 완료되었을때 실행
                         reader.onload = function(rst){
-                            document.getElementById('preview').innerHTML += '<img src="' + rst.target.result + '">';
+                            document.getElementById('preview').innerHTML += '<img width="200px" height="200px" src="' + rst.target.result + '">';
                         }
 
                         // 파일을 읽는다

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+
+    <th:block th:fragment="content">
+
+        <form>
+            <h1 class="mt-4"> Review Modify Page </h1>
+
+            <input type="hidden" name="rro" th:value="${dto.rro}" readonly>
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" name="title"th:value="${dto.title}">
+            </div>
+
+            <div class="form-group">
+                <label>Content</label>
+                <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
+            </div>
+
+
+
+
+
+
+            <div id="savedPhotoList" class="form-group"></div>
+
+
+            <div class="form-group">
+                <label>Add Photo</label>
+                <div class="custom-file">
+                    <input name="photos" class="custom-file-input files" accept="image/*" type="file" onchange="previewImage(this)"  multiple>
+                    <label class="custom-file-label" data-browse="Browse"></label>
+
+                </div>
+            </div>
+
+            <div id="preview" > </div>
+
+
+
+            <div class="form-group">
+                <label>Writer</label>
+                <input type="text" class="form-control" name="writerEmail"
+                       th:value="${dto.writerEmail}" readonly>
+            </div>
+
+
+
+            <div class="form-group">
+                <label>RegDate</label>
+                <input type="text" class="form-control"
+                       th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>ModDate</label>
+                <input type="text" class="form-control"
+                       th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            </div>
+
+            <div id="imageInputList">
+
+            </div>
+
+
+        </form>
+
+        <button type="button" class="btn btn-primary" id="modiBtn"> Modify</button>
+
+
+
+        <a th:href="@{/review/reviewList( page = ${requestDTO.page}, type=${requestDTO.type},
+                keyword = ${requestDTO.keyword})}">
+            <button type="button" class="btn btn-info"> List</button>
+
+        </a>
+
+        <span id="likePart"></span>
+
+
+        <script th:inline="javascript">
+
+            $(document).ready(function(){
+                makeSavedPhoto([[${dto.imageList}]]);
+            })
+
+
+            function makeSavedPhoto(imageList){
+
+                var savedList = $('#savedPhotoList');
+
+                var str = "";
+
+
+
+                $(imageList).each(function (i,imageDTO){
+
+                    str+='<span data-inum="'+ imageDTO.inum +'" data-path="'+ imageDTO.path +'" data-uuid="' +imageDTO.uuid+
+                        '" data-imgname="'+imageDTO.imgName+'">';
+                    str+='<img id=""src="/review/getPhoto?fileName='+imageDTO.thumImgURL+'">';
+                    str+='</span>';
+                })
+                    
+                savedList.append(str);
+            }
+
+            $('#savedPhotoList').on("click", "span img", function(e)
+            {
+                console.log("들어왔나");
+
+                var targetSpan = $(this).closest("span");
+
+                targetSpan.remove();
+            })
+
+
+            function previewImage(f){
+
+                document.getElementById('preview').innerHTML = '';
+
+                var file = f.files;
+
+
+                for(var i = 0; i < file.length ; i++)
+                {
+
+
+
+                    // 확장자 체크
+                    if(!/\.(gif|jpg|jpeg|png)$/i.test(file[i].name)){
+                        alert('gif, jpg, png 파일만 선택해 주세요.\n\n현재 파일 : ' + file[i].name);
+
+                        // 선택한 파일 초기화
+                        f.outerHTML = f.outerHTML;
+
+                        document.getElementById('preview').innerHTML = '';
+
+                    }
+                    else {
+
+                        // FileReader 객체 사용
+                        var reader = new FileReader();
+
+                        // 파일 읽기가 완료되었을때 실행
+                        reader.onload = function(rst){
+                            document.getElementById('preview').innerHTML += '<img width="200px" height="200px" src="' + rst.target.result + '">';
+                        }
+
+                        // 파일을 읽는다
+                        reader.readAsDataURL(file[i]);
+                    }
+                }
+            }
+
+            var actionForm = $("form");
+
+            $('#modiBtn').click(function(){
+
+                if(!confirm("수정하시겠습니까?"))
+                {
+                    return;
+                }
+
+                var str = "";
+
+                $('#savedPhotoList span').each(function(i,obj){
+
+                    var target = $(obj);
+
+                    str += '<input type="hidden" name="imageList['+i+'].inum" value="'+ target.data('inum') +'">';
+                    str += '<input type="hidden" name="imageList['+i+'].path" value="'+ target.data('path') +'">';
+                    str += '<input type="hidden" name="imageList['+i+'].uuid" value="'+ target.data('uuid') +'">';
+                    str += '<input type="hidden" name="imageList['+i+'].imgName" value="'+ target.data('imgname') +'">';
+
+                })
+
+                $('#imageInputList').html(str);
+
+
+                actionForm.attr("action", "/review/reviewModify").attr("method", "post");
+                actionForm.attr("enctype", "multipart/form-data");
+                actionForm.submit();
+
+
+
+            })
+
+
+
+        </script>
+
+    </th:block>
+
+
+</th:block>

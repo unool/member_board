@@ -6,13 +6,14 @@ import org.zerock.member_board.entity.ReviewImage;
 import org.zerock.member_board.entity.redis.Like;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "like")
 @Setter
 @Getter
 public class ReviewDTO {
@@ -33,14 +34,10 @@ public class ReviewDTO {
 
     private LocalDateTime modDate;
 
-    private List<ReviewImageDTO> imageList;
+    @Builder.Default
+    private List<ReviewImageDTO> imageList = new ArrayList<>();
 
 
-
-    //삭제삭제
-    public String getTest(){
-        return "i love you";
-    }
 
 
 }

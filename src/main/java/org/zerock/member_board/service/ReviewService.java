@@ -24,7 +24,7 @@ public interface ReviewService {
 
     ReviewDTO get(Long rro);
 
-    void modify(ReviewDTO reviewDTO);
+    void modify(ReviewDTO reviewDTO, MultipartFile[] photos);
 
     default Review dtoToEntity(ReviewDTO dto){
 
@@ -54,30 +54,34 @@ public interface ReviewService {
 
         System.out.println("rro : "+review.getRro());
 
-        if(imageList.size() > 0)
+        if(imageList != null)
         {
-
-            System.out.println("size : "+imageList.size());
-
-            int i = 0;
-
-            for(ReviewImage reviewImage : imageList)
+            if(imageList.size() > 0)
             {
-                if(reviewImage == null)
-                {
-                    break;
-                }
-                System.out.println(i++);
 
-                ReviewImageDTO reviewImageDTO = ReviewImageDTO.builder()
-                        .inum(reviewImage.getInum())
-                        .uuid(reviewImage.getUuid())
-                        .imgName(reviewImage.getImgName())
-                        .path(reviewImage.getPath())
-                        .build();
-                list.add(reviewImageDTO);
+                System.out.println("size : "+imageList.size());
+
+                int i = 0;
+
+                for(ReviewImage reviewImage : imageList)
+                {
+                    if(reviewImage == null)
+                    {
+                        break;
+                    }
+                    System.out.println(i++);
+
+                    ReviewImageDTO reviewImageDTO = ReviewImageDTO.builder()
+                            .inum(reviewImage.getInum())
+                            .uuid(reviewImage.getUuid())
+                            .imgName(reviewImage.getImgName())
+                            .path(reviewImage.getPath())
+                            .build();
+                    list.add(reviewImageDTO);
+                }
             }
         }
+
 
         ReviewDTO reviewDTO = ReviewDTO.builder()
                 .rro(review.getRro())

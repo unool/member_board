@@ -1,14 +1,14 @@
 package org.zerock.member_board.dto;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Setter
 @Getter
@@ -23,6 +23,11 @@ public class ReviewImageDTO {
     private String path;
 
 
+    public String getJinjja(){
+
+
+        return "테스트다";
+    }
     public String getOriImgURL() throws UnsupportedEncodingException {
         return URLEncoder.encode(path +uuid + "_"+imgName,"UTF-8");
     }
@@ -30,7 +35,7 @@ public class ReviewImageDTO {
     public String getThumImgURL() throws UnsupportedEncodingException {
         String encoding = URLEncoder.encode(path+"s_" +uuid  + "_"+imgName,"UTF-8");
 
-        System.out.println(path+"s_" +uuid  + "_"+imgName);
+        System.out.println("인코딩 안된거 : "+path+"s_" +uuid  + "_"+imgName);
         return encoding;
 
     }

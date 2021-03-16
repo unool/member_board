@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.member_board.dto.LikeDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.ParticipationDTO;
@@ -59,7 +60,7 @@ public class ReviewController {
     public void register(String email, Model model)
     {
 
-        model.addAttribute("dtoList", reviewService.getList(email));
+        model.addAttribute("dtoList", reviewService.getList(email)); //작성 가능한 보드를 가져오기위해
     }
 
 
@@ -74,9 +75,14 @@ public class ReviewController {
     }
 
     @PostMapping("/reviewModify")
-    public void modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, ReviewDTO reviewDTO)
+    public String modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
+                         ReviewDTO reviewDTO, MultipartFile[] photos , RedirectAttributes redirectAttributes)
     {
-        reviewService.modify(reviewDTO);
+
+        reviewService.modify(reviewDTO, photos);
+
+
+        return "redirect:/review/reviewList"; //바꿀것
     }
 
     @GetMapping("/getPhoto")

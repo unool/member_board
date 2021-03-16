@@ -13,11 +13,14 @@
             <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
 
 
-            <div class="form-group">
-                <label>Bno</label>
-                <input type="text" class="form-control" name="bno"
-                       th:value="${dto.bno}" readonly>
-            </div>
+
+            <input type="hidden" name="bno" th:value="${dto.bno}" readonly>
+
+            <!--            <div class="form-group">-->
+<!--                <label>Bno</label>-->
+<!--                <input type="text" class="form-control" name="bno"-->
+<!--                       th:value="${dto.bno}" readonly>-->
+<!--            </div>-->
 
             <div class="form-group">
                 <label>Title</label>
@@ -27,8 +30,7 @@
 
             <div class="form-group">
                 <label>Content</label>
-                <textarea class="form-control" rows="5" name="content"
-                          th:value="${dto.bno}">[[${dto.content}]]</textarea>
+                <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
 
             </div>
 
@@ -43,7 +45,7 @@
 
             <div class="form-group">
                 <label>Limit Date</label>
-                <input id="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}"/><br>
+                <input name="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}"/><br>
             </div>
 
 
@@ -86,7 +88,7 @@
         <button type="button" class="btn btn-info listBtn"> List</button>
 
 
-        <button type="button" class="btn btn-danger fremoveBtn" > Remove</button>
+        <button type="button" class="btn btn-danger removeBtn" > Remove</button>
 
 
         <script th:inline="javascript">

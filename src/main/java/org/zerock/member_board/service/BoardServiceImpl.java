@@ -125,8 +125,7 @@ public class BoardServiceImpl implements BoardService{
 
         if(!board.equals(null))
         {
-            board.changeContent(boardDTO.getContent());
-            board.changeTitle(boardDTO.getTitle());
+            board.changeValue(boardDTO);
         }
     }
 
@@ -142,11 +141,11 @@ public class BoardServiceImpl implements BoardService{
                 return;
             }
 
-            board.changeEnd(true);
+            board.setEnd(true);
 
             Optional<Attend> result = attendRepository.findById(bno.toString());
 
-            Attend attend = (Attend) result.get();
+            Attend attend = result.get();
 
             List<String> members = attend.getMembers();
 

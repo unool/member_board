@@ -2,10 +2,12 @@ package org.zerock.member_board.entity;
 
 
 import lombok.*;
+import org.zerock.member_board.dto.BoardDTO;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @ToString(exclude = "writer")
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Setter
 public class Board extends BaseEntity{
 
     @Id
@@ -42,15 +45,21 @@ public class Board extends BaseEntity{
     private Boolean end;
 
 
-    public void changeContent(String content){
-        this.content = content;
+    public Board changeValue(BoardDTO boardDTO)
+    {
+        LocalDateTime newDate = LocalDateTime
+                .parse(boardDTO.getLimitDate(), DateTimeFormatter.ISO_DATE_TIME); //datetime-local에서 읽을 수 있는형태로 저장
+
+
+        this.title = boardDTO.getTitle();
+        this.content = boardDTO.getContent();
+        this.costs = boardDTO.getCosts();
+        this.place = boardDTO.getPlace();
+        this.position = boardDTO.getPosition();
+        this.limitDate = newDate;
+
+        return this;
     }
 
-    public void changeTitle(String title){
-        this.title = title;
-    }
 
-    public void changeEnd(Boolean end){
-        this.end = end;
-    }
 }
