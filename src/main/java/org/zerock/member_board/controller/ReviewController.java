@@ -85,6 +85,14 @@ public class ReviewController {
         return "redirect:/review/reviewList"; //바꿀것
     }
 
+    @GetMapping("/removeReview")
+    public String removeReview(Long rro)
+    {
+        reviewService.removeReviewWithReviewImage(rro);
+        return "redirect:/review/reviewList";
+    }
+
+
     @GetMapping("/getPhoto")
     public ResponseEntity<byte[]> getPhoto(String fileName){
 
@@ -107,6 +115,5 @@ public class ReviewController {
 
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
-
 
 }

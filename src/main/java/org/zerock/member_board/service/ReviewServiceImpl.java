@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -203,6 +204,24 @@ public class ReviewServiceImpl implements ReviewService{
 
         reviewRepository.updateReviewTitleContent(reviewDTO.getTitle(), reviewDTO.getContent(), reviewDTO.getRro());
 
+    }
+
+
+    @Override
+    public void removeReviewWithReviewImage(Long rro) {
+        Review review = Review.builder().
+                rro(rro)
+                .build();
+
+        List<ReviewImage> reviewImageList = reviewImageRepository.findByReviewRro(rro);
+
+        for(ReviewImage ri : reviewImageList)
+        {
+            removeFile(ri.getPath(), ri.getUuid(), ri.getImgName());
+            reviewImageRepository.deleteReviewImageByReview(review);
+        }
+
+        reviewRepository.delete(review);
     }
 
     @Override
@@ -441,6 +460,12 @@ public class ReviewServiceImpl implements ReviewService{
             String srcFileName = URLDecoder.decode(fileName, "UTF-8");
 
             File file = new File( srcFileName);
+
+
+            //삭제
+            System.out.println("파일종류 ===== "+Files.probeContentType(file.toPath()));
+
+
 
             HttpHeaders headers = new HttpHeaders();
             result = new ResponseEntity<>(FileCopyUtils.copyToByteArray(file), headers, HttpStatus.OK);

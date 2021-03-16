@@ -21,10 +21,9 @@
             </div>
 
 
-
-
-
-
+            <div>
+                <small>* 기존 사진을 삭제하려면 클릭하세요 *</small>
+            </div>
             <div id="savedPhotoList" class="form-group"></div>
 
 
@@ -61,6 +60,7 @@
                        th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
             </div>
 
+
             <div id="imageInputList">
 
             </div>
@@ -75,8 +75,12 @@
         <a th:href="@{/review/reviewList( page = ${requestDTO.page}, type=${requestDTO.type},
                 keyword = ${requestDTO.keyword})}">
             <button type="button" class="btn btn-info"> List</button>
-
         </a>
+
+        <a th:href="@{/review/removeReview(rro = ${dto.rro})}">
+            <button type="button" class="btn btn-danger" id="remBtn"> Remove</button>
+        </a>
+
 
         <span id="likePart"></span>
 
