@@ -18,26 +18,46 @@
         <!--        검색 폼-->
 
         <form th:action="@{/board/list}" method="get" id="searchForm">
+
             <div class="input-gorup">
                 <input type="hidden" name="page" value="1">
                 <div class="input-group-prepend">
-                    <select class="custom-select" name="type">
-                        <option th:selected="${pageRequestDTO.type == null}">------</option>
-                        <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
-                        <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
-                        <option value="w" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
-                        <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목 + 내용</option>
-                        <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목 + 내용 + 작성자</option>
+                    <span class="col-md-5">
+                        <label style="font-weight: bold" >Basic Item</label>
+                        <input type="checkbox" id="type0" th:checked="${pageRequestDTO.getType(0)}">Ttile
+                        <input style="margin-left: 20%" type="checkbox"
+                               id="type1" th:checked="${pageRequestDTO.getType(1)}">Content
+                        <input style="margin-left: 20%" type="checkbox" id="type2"
+                               th:checked="${pageRequestDTO.getType(2)}">Writer
+                    </span>
+                    <input class="form-control" name="typeKeyword" th:value="${pageRequestDTO.typeKeyword}">
 
-                    </select>
-
-                    <input class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
                     <div class="input-group-append" id="button-addon4">
 
                         <button class="btn btn-outline-secondary btn-search" type="button">Search</button>
 
                         <button class="btn btn-outline-secondary btn-clear" type="button">Clear</button>
                     </div>
+                </div>
+
+                <div class="input-group-prepend">
+                    <span class="col-md-5">
+                        <label style="font-weight: bold" >Add Item</label>
+                        <input type="checkbox" name="region" th:checked="${pageRequestDTO.region}">Region
+                    </span>
+                    <input class="form-control" name="regionKeyword" th:value="${pageRequestDTO.regionKeyword}">
+                </div>
+
+                <div class="input-group-prepend">
+                     <span class="col-md-5">
+                         <label style="font-weight: bold" >Meeting Cost</label>
+                         <input class="form-control-sm" type="text" name="minCost" th:value="${pageRequestDTO.minCost}"> ~
+                         <input class="form-control-sm" type="text" name="maxCost" th:value="${pageRequestDTO.maxCost}">
+                     </span>
+                </div>
+
+                <div id="hiddenCheck">
+
                 </div>
             </div>
 
@@ -63,7 +83,11 @@
 <!--                        [[${dto.bno}]]-->
 <!--                    </a>-->
 
-                    <a th:href="@{/board/read(bno= ${dto.bno}, page = ${result.page}, type=${pageRequestDTO.type},keyword = ${pageRequestDTO.keyword})}">
+                    <a th:href="@{/board/read(bno= ${dto.bno}, page = ${result.page}, type=${pageRequestDTO.type},
+                    typeKeyword = ${pageRequestDTO.typeKeyword} , region = ${pageRequestDTO.region},
+                    regionKeyword=${pageRequestDTO.regionKeyword}, minCost =${pageRequestDTO.minCost},
+                    maxCost=${pageRequestDTO.maxCost})}">
+
                         [[${dto.title}]]</a>[<b th:text="${dto.replyCount}"></b>]
 
                 </th>
@@ -83,20 +107,28 @@
         <ul class="pagination h-100 justify-content-center align-items-center">
 
             <li class="page-item" th:if="${result.prev}">
-                <a class="page-link" th:href="@{/board/list(page= ${result.start - 1})}" tabindex="-1">Previous</a>
+                <a class="page-link" th:href="@{/board/list(page= ${result.start - 1}, type=${pageRequestDTO.type},
+                    typeKeyword = ${pageRequestDTO.typeKeyword} , region = ${pageRequestDTO.region},
+                    regionKeyword=${pageRequestDTO.regionKeyword}, minCost =${pageRequestDTO.minCost},
+                    maxCost=${maxCost})}" tabindex="-1">Previous</a>
             </li>
 
             <li th:class=" 'page-item ' + ${result.page == page? 'active' : ''} "
                 th:each="page: ${result.pageList}">
-                <a class="page-link" th:href="@{/board/list(page= ${page},type=${pageRequestDTO.type},
-                keyword = ${pageRequestDTO.keyword})}">
+                <a class="page-link" th:href="@{/board/list(page= ${page}, type=${pageRequestDTO.type},
+                    typeKeyword = ${pageRequestDTO.typeKeyword} , region = ${pageRequestDTO.region},
+                    regionKeyword=${pageRequestDTO.regionKeyword}, minCost =${pageRequestDTO.minCost},
+                    maxCost=${maxCost})}">
 
                     [[${page}]]
                 </a>
             </li>
 
             <li class="page-item" th:if="${result.next}">
-                <a class="page-link" th:href="@{/board/list(page= ${result.end + 1})}">Next</a>
+                <a class="page-link" th:href="@{/board/list(page= ${result.end + 1}, type=${pageRequestDTO.type},
+                    typeKeyword = ${pageRequestDTO.typeKeyword} , region = ${pageRequestDTO.region},
+                    regionKeyword=${pageRequestDTO.regionKeyword}, minCost =${pageRequestDTO.minCost},
+                    maxCost=${maxCost})}">Next</a>
             </li>
 
 
@@ -109,6 +141,53 @@
 
             $('.btn-search').click(function (e) {
 
+                var minCost = $('input[name=minCost]').val() == "" ? null : parseInt($('input[name=minCost]').val());
+                var maxCost = $('input[name=maxCost]').val() == "" ? null : parseInt($('input[name=maxCost]').val());
+
+
+                if(minCost == null && maxCost != null)
+                {
+                    alert("모임 비용 조건을 올바르게 입력하세요");
+                    return;
+                }
+                else if(minCost != null && maxCost == null)
+                {
+                    alert("모임 비용 조건을 올바르게 입력하세요");
+                    return;
+                }
+                else if(minCost > maxCost)
+                {
+                    alert("모임 비용 조건을 올바르게 입력하세요");
+                    return;
+                }
+
+                if(minCost != null && minCost < 0)
+                {
+                    alert("모임 비용 조건을 올바르게 입력하세요");
+                    return;
+                }
+
+                if(maxCost != null && maxCost < 0)
+                {
+                    alert("모임 비용 조건을 올바르게 입력하세요");
+                    return;
+                }
+
+
+                var type0 = $('#type0').is(":checked");
+                var type1 = $('#type1').is(":checked");
+                var type2 = $('#type2').is(":checked");
+
+
+                var str="";
+                str += '<input type="hidden" name="type[0]" value="'+type0+'">';
+                str += '<input type="hidden" name="type[1]" value="'+type1+'">';
+                str += '<input type="hidden" name="type[2]" value="'+type2+'">';
+
+
+                $('#hiddenCheck').html(str);
+
+
                 searchForm.submit(); //searchForm 폼에 있는 내용들을 담아서 현재 페이지 재호출
             })
 
@@ -116,6 +195,9 @@
 
                 searchForm.empty().submit();
             })
+
+
+
 
         </script>
 

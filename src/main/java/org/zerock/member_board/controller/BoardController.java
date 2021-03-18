@@ -2,6 +2,7 @@ package org.zerock.member_board.controller;
 
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -40,9 +41,9 @@ public class BoardController {
     private  AttendService attendService;
 
     @GetMapping("/list")
-    public void list(PageRequestDTO pageRequestDTO, Model model)
+    public void list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model)
     {
-
+        System.out.println("===================들어왔다  +");
         model.addAttribute("result", boardService.getList(pageRequestDTO));
 
     }
@@ -56,10 +57,7 @@ public class BoardController {
     @PostMapping("/register")
     public String registerPost(BoardDTO dto, RedirectAttributes redirectAttributes) throws ParseException {
 
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        LocalDateTime parsedLocalDateTime = LocalDateTime.parse(dto.getLimitDate());
 
-        System.out.println("<> ===========" + dto);
         Long bno = boardService.register(dto);
 
         redirectAttributes.addAttribute("bno", bno);
@@ -71,12 +69,9 @@ public class BoardController {
     public void read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
                      Long bno, Model model)
     {
+        System.out.println(pageRequestDTO);
         BoardDTO boardDTO = boardService.get(bno);
-//        AttendDTO attendDTO = attendService.getAttend(bno);
-
-
         model.addAttribute("dto", boardDTO);
-//        model.addAttribute("attend", attendDTO);
     }
 
 
@@ -86,6 +81,7 @@ public class BoardController {
     {
 
         boardService.removeWithReplyies(bno);
+
 
         redirectAttributes.addFlashAttribute("msg", bno);
 
@@ -100,8 +96,15 @@ public class BoardController {
         boardService.modify(dto);
 
         redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
-        redirectAttributes.addAttribute("type", pageRequestDTO.getType());
-        redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+        redirectAttributes.addAttribute("size", pageRequestDTO.getSize());
+        redirectAttributes.addAttribute("type[0]", pageRequestDTO.getType(0));
+        redirectAttributes.addAttribute("type[1]", pageRequestDTO.getType(1));
+        redirectAttributes.addAttribute("type[2]", pageRequestDTO.getType(2));
+        redirectAttributes.addAttribute("typeKeyword", pageRequestDTO.getTypeKeyword());
+        redirectAttributes.addAttribute("region", pageRequestDTO.isRegion());
+        redirectAttributes.addAttribute("regionKeyword", pageRequestDTO.getRegionKeyword());
+        redirectAttributes.addAttribute("minCost", pageRequestDTO.getMinCost());
+        redirectAttributes.addAttribute("maxCost", pageRequestDTO.getMaxCost());
         redirectAttributes.addAttribute("bno", dto.getBno());
 
         return "redirect:/board/read";
@@ -115,7 +118,7 @@ public class BoardController {
 
         redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
         redirectAttributes.addAttribute("type", pageRequestDTO.getType());
-        redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+        redirectAttributes.addAttribute("keyword", pageRequestDTO.getTypeKeyword());
         redirectAttributes.addAttribute("bno", bno);
         return "redirect:/board/read";
     }

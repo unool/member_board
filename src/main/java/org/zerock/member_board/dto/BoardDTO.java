@@ -26,7 +26,7 @@ public class BoardDTO {
 
     private String writerName;
 
-    private String costs;
+    private Long costs;
 
     private String place;
 

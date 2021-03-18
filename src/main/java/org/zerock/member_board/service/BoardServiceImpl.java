@@ -27,6 +27,7 @@ import org.zerock.member_board.repository.BoardRepository;
 import org.zerock.member_board.repository.ParticipationRepository;
 import org.zerock.member_board.repository.ReplyRepository;
 
+import org.zerock.member_board.repository.querydsl.SearchBoardRepositoryImpl;
 import org.zerock.member_board.service.util.MemberHandler;
 
 import javax.persistence.RollbackException;
@@ -46,7 +47,7 @@ public class BoardServiceImpl implements BoardService{
     private final ReplyRepository replyRepository;
     private final AttendRepository attendRepository;
     private final ParticipationRepository participationRepository;
-    private final ApplicationContext applicationContext;
+    private final SearchBoardRepositoryImpl searchBoardRepository;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -74,11 +75,38 @@ public class BoardServiceImpl implements BoardService{
     }
 
 
+    //Spring Data JPA만 사용 (검색 없는 버전)
+//    @Override
+//    public PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
+//
+//        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageRequestDTO.getPageable(
+//                Sort.by("bno").descending()));
+//
+//        List<BoardDTO> boardDTOList = new ArrayList<>();
+//
+//        for(Object[] objects : result)
+//        {
+//            Board board = (Board) objects[0];
+//
+//            Optional<Attend> attend = attendRepository.findById(board.getBno().toString());
+//
+//            BoardDTO boardDTO = entityToDTO((Board)objects[0],(Member) objects[1],(Long)objects[2], attend.get());
+//
+//            boardDTOList.add(boardDTO);
+//        }
+//
+//        int totalPage = result.getTotalPages();
+//
+//        return new PageResultDTO<>(boardDTOList, totalPage, result.getPageable());
+//    }
+
+
     @Override
     public PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
 
-        Page<Object[]> result = boardRepository.getBoardWithReplyCount(pageRequestDTO.getPageable(
-                Sort.by("bno").descending()));
+        Page<Object[]> result = searchBoardRepository.searchBoard(pageRequestDTO.getType(), pageRequestDTO.getTypeKeyword(),
+                pageRequestDTO.isRegion(), pageRequestDTO.getRegionKeyword(), pageRequestDTO.getMinCost(), pageRequestDTO.getMaxCost(),
+                pageRequestDTO.getPageable(Sort.by("bno").descending()));
 
         List<BoardDTO> boardDTOList = new ArrayList<>();
 
@@ -93,9 +121,7 @@ public class BoardServiceImpl implements BoardService{
             boardDTOList.add(boardDTO);
         }
 
-        int totalPage = result.getTotalPages();
-
-        return new PageResultDTO<>(boardDTOList, totalPage, result.getPageable());
+        return new PageResultDTO<>(boardDTOList, result.getTotalPages(), result.getPageable());
     }
 
     @Override

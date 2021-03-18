@@ -7,11 +7,6 @@
 
         <h1 class="mt-4"> Review Read Page </h1>
 
-        <input type="hidden" name="page" th:value="${requestDTO.page}">
-        <input type="hidden" name="type" th:value="${requestDTO.type}">
-        <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
-
-
         <input type="hidden" name="rro" th:value="${dto.rro}" readonly>
 
 
@@ -56,7 +51,9 @@
 
         <span sec:authorize="isAuthenticated()">
             <a th:href="@{/review/reviewModify(rro = ${dto.rro}, page = ${requestDTO.page}, type=${requestDTO.type},
-                keyword = ${requestDTO.keyword})}">
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
             <button type="button" class="btn btn-primary" id="modiBtn" th:if="${session['user'].email} == ${dto.writerEmail}"> Modify</button>
                 </a>
         </span>
@@ -64,7 +61,9 @@
 
 
         <a th:href="@{/review/reviewList( page = ${requestDTO.page}, type=${requestDTO.type},
-                keyword = ${requestDTO.keyword})}">
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
             <button type="button" class="btn btn-info"> List</button>
 
         </a>

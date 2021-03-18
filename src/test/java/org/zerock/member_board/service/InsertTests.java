@@ -46,7 +46,7 @@ public class InsertTests {
                     .writer(member)
                     .content("content.. " + i)
                     .title("title..." + i)
-                    .costs("1000"+i)
+                    .costs(1000L+i)
                     .place("경기도 의정부시 의정부동 34-3 | 경기도 의정부시 태평로 100")
                     .end(true)
                     .position("lat:37.7412983, lng:127.0518019")

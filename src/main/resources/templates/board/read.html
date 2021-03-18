@@ -7,95 +7,92 @@
 
         <h1 class="mt-4"> Board Read Page </h1>
 
-        <input type="hidden" name="page" th:value="${requestDTO.page}">
-        <input type="hidden" name="type" th:value="${requestDTO.type}">
-        <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
+        <form>
+    <!--        <div class="form-group">-->
+    <!--            <label>Bno</label>-->
+    <!--            <input type="text" class="form-control" name="gno"-->
+    <!--                   th:value="${dto.bno}" readonly>-->
+    <!--        </div>-->
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" name="title"
+                       th:value="${dto.title}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>Content</label>
+                <textarea class="form-control" rows="5" name="content"
+                          readonly>[[${dto.content}]]</textarea>
+            </div>
 
 
-        <input type="hidden" name="bno" th:value="${dto.bno}" readonly>
-
-<!--        <div class="form-group">-->
-<!--            <label>Bno</label>-->
-<!--            <input type="text" class="form-control" name="gno"-->
-<!--                   th:value="${dto.bno}" readonly>-->
-<!--        </div>-->
-
-        <div class="form-group">
-            <label>Title</label>
-            <input type="text" class="form-control" name="title"
-                   th:value="${dto.title}" readonly>
-        </div>
-
-        <div class="form-group">
-            <label>Content</label>
-            <textarea class="form-control" rows="5" name="content"
-                      readonly>[[${dto.content}]]</textarea>
-        </div>
-
-
-<!--        참가 관련-->
-        <div id="attendDiv"></div>
+    <!--        참가 관련-->
+            <div id="attendDiv"></div>
 
 
 
 
 
-        <div id="map" style="width:50%;height:400px;"></div>
+            <div id="map" style="width:50%;height:400px;"></div>
 
 
-        <div class="form-group">
-            <label>Limit Date</label>
-            <input id="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}" readonly>
-        </div>
+            <div class="form-group">
+                <label>Limit Date</label>
+                <input id="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}" readonly>
+            </div>
 
 
-        <div class="form-group">
-            <label >Meeting Costs</label>
-            <input class="form-control" name="costs" th:value="${dto.costs}" readonly>
-        </div>
+            <div class="form-group">
+                <label >Meeting Costs</label>
+                <input class="form-control" name="costs" th:value="${dto.costs}" readonly>
+            </div>
 
-        <div class="form-group">
-            <label >Meeting Place</label>
-            <input class="form-control" name="place" th:value="${dto.place}" readonly>
-        </div>
-
-
-        <div class="form-group">
-            <label>Writer</label>
-            <input type="text" class="form-control" name="writer"
-                   th:value="${dto.writerEmail}" readonly>
-        </div>
+            <div class="form-group">
+                <label >Meeting Place</label>
+                <input class="form-control" name="place" th:value="${dto.place}" readonly>
+            </div>
 
 
-
-        <div class="form-group">
-            <label>RegDate</label>
-            <input type="text" class="form-control" name="regDate"
-                   th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
-        </div>
-
-        <div class="form-group">
-            <label>ModDate</label>
-            <input type="text" class="form-control" name="modDate"
-                   th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
-        </div>
-
-
-        <span sec:authorize="isAuthenticated()">
-            <a th:href="@{/board/modify(bno = ${dto.bno}, page = ${requestDTO.page}, type=${requestDTO.type},
-                keyword = ${requestDTO.keyword})}">
-            <button type="button" class="btn btn-primary" id="modiBtn" th:if="${session['user'].email} == ${dto.writerEmail}"> Modify</button>
-                </a>
-        </span>
+            <div class="form-group">
+                <label>Writer</label>
+                <input type="text" class="form-control" name="writer"
+                       th:value="${dto.writerEmail}" readonly>
+            </div>
 
 
 
+            <div class="form-group">
+                <label>RegDate</label>
+                <input type="text" class="form-control" name="regDate"
+                       th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            </div>
 
-        <a th:href="@{/board/list(page=${requestDTO.page}, size=${requestDTO.size}
-        , type=${requestDTO.type}, keyword=${requestDTO.keyword})}">
-            <button type="button" class="btn btn-info"> List</button>
-        </a>
+            <div class="form-group">
+                <label>ModDate</label>
+                <input type="text" class="form-control" name="modDate"
+                       th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            </div>
 
+
+            <span sec:authorize="isAuthenticated()">
+                <a th:href="@{/board/modify(bno=${dto.bno}, page=${requestDTO.page}, size=${requestDTO.size}
+            , type=${requestDTO.type}, typeKeyword=${requestDTO.typeKeyword}, region=${requestDTO.region}
+            , regionKeyword=${requestDTO.regionKeyword}, minCost=${requestDTO.minCost}, maxCost=${requestDTO.maxCost})}">
+                <button type="button" class="btn btn-primary" id="modiBtn" th:if="${session['user'].email} == ${dto.writerEmail}"> Modify</button>
+                    </a>
+            </span>
+
+
+
+
+            <a th:href="@{/board/list(page=${requestDTO.page}, size=${requestDTO.size}
+            , type=${requestDTO.type}, typeKeyword=${requestDTO.typeKeyword}, region=${requestDTO.region}
+            , regionKeyword=${requestDTO.regionKeyword}, minCost=${requestDTO.minCost}, maxCost=${requestDTO.maxCost})}">
+                <button type="button" class="btn btn-info"> List</button>
+            </a>
+
+        </form>
 
         <div>
             <div class = "mt-4">
@@ -467,13 +464,18 @@
                             var bno = [[${dto.bno}]];
                             var page = [[${requestDTO.page}]];
                             var type = [[${requestDTO.type}]];
-                            var keyword = [[${requestDTO.keyword}]];
+                            var typeKeyword = [[${requestDTO.typeKeyword}]];
+                            var region = [[${requestDTO.region}]];
+                            var regionKeyword = [[${requestDTO.regionKeyword}]];
+                            var minCost = [[${requestDTO.minCost}]];
+                            var maxCost = [[${requestDTO.maxCost}]];
 
                             if(currentConnectedEmail == writerEmail)
                             {
                                 str += '<a href="/board/confirm?bno='+ bno + '&page=' +
-                                    page +'&type='+ type +'&keyword=' +
-                                    keyword + ')">';
+                                    page +'&type='+ type +'&typeKeyword=' + typeKeyword + '&region=' + region + '&regionKeyword='+
+                                    regionKeyword + '&minCost=' + minCost.toString() + '&maxCost=' + maxCost.toString() +'">';
+
                                 str += '<button type="button" class="btn btn-primary" id="confirmBtn">확정</button>';
                                 str += '</a>';
                             }

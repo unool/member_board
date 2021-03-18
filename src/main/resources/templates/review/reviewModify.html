@@ -6,6 +6,19 @@
     <th:block th:fragment="content">
 
         <form>
+
+            <input type="hidden" name="page" th:value="${requestDTO.page}">
+            <input type="hidden" name="type[0]" th:value="${requestDTO.getType(0)}">
+            <input type="hidden" name="type[1]" th:value="${requestDTO.getType(1)}">
+            <input type="hidden" name="type[2]" th:value="${requestDTO.getType(2)}">
+            <input type="hidden" name="typeKeyword" th:value="${requestDTO.typeKeyword}">
+            <input type="hidden" name="region" th:value="${requestDTO.region}">
+            <input type="hidden" name="regionKeyword" th:value="${requestDTO.regionKeyword}">
+            <input type="hidden" name="minCost" th:value="${requestDTO.minCost}">
+            <input type="hidden" name="maxCost" th:value="${requestDTO.maxCost}">
+
+
+
             <h1 class="mt-4"> Review Modify Page </h1>
 
             <input type="hidden" name="rro" th:value="${dto.rro}" readonly>
@@ -73,7 +86,9 @@
 
 
         <a th:href="@{/review/reviewList( page = ${requestDTO.page}, type=${requestDTO.type},
-                keyword = ${requestDTO.keyword})}">
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
             <button type="button" class="btn btn-info"> List</button>
         </a>
 
@@ -159,7 +174,6 @@
                 }
             }
 
-            var actionForm = $("form");
 
             $('#modiBtn').click(function(){
 
@@ -183,7 +197,7 @@
 
                 $('#imageInputList').html(str);
 
-
+                var actionForm = $("form");
                 actionForm.attr("action", "/review/reviewModify").attr("method", "post");
                 actionForm.attr("enctype", "multipart/form-data");
                 actionForm.submit();

@@ -1,29 +1,38 @@
 package org.zerock.member_board.dto;
 
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Arrays;
+
 @Log4j2
 @Builder
 @AllArgsConstructor
 @Data
+@ToString
 public class PageRequestDTO { //현재 페이지에 대한 정보를 담고 있는것 같은 DTO
-
 
     private int page;
     private int size;
-    private String type;
-    private String keyword;
+    private boolean[] type;
+    private String typeKeyword;
+    private boolean region;
+    private String regionKeyword;
+    private Long minCost;
+    private Long maxCost;
 
 
     public PageRequestDTO() {
         this.page = 1;
         this.size = 10;
+
 
     }
 
@@ -34,4 +43,12 @@ public class PageRequestDTO { //현재 페이지에 대한 정보를 담고 있�
         //현재 Pageable 에서 세팅이 페이지의 첫번째는 0이라고 설정이 되있는듯
 
     }
+
+    public boolean getType(int index)
+    {
+
+        return type != null && type.length > 0 ? type[index] : false;
+    }
+
+
 }

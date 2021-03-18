@@ -9,9 +9,14 @@
             <h1 class="mt-4"> Board Modify Page </h1>
 
             <input type="hidden" name="page" th:value="${requestDTO.page}">
-            <input type="hidden" name="type" th:value="${requestDTO.type}">
-            <input type="hidden" name="keyword" th:value="${requestDTO.keyword}">
-
+            <input type="hidden" name="type[0]" th:value="${requestDTO.getType(0)}">
+            <input type="hidden" name="type[1]" th:value="${requestDTO.getType(1)}">
+            <input type="hidden" name="type[2]" th:value="${requestDTO.getType(2)}">
+            <input type="hidden" name="typeKeyword" th:value="${requestDTO.typeKeyword}">
+            <input type="hidden" name="region" th:value="${requestDTO.region}">
+            <input type="hidden" name="regionKeyword" th:value="${requestDTO.regionKeyword}">
+            <input type="hidden" name="minCost" th:value="${requestDTO.minCost}">
+            <input type="hidden" name="maxCost" th:value="${requestDTO.maxCost}">
 
 
             <input type="hidden" name="bno" th:value="${dto.bno}" readonly>
@@ -246,16 +251,18 @@
 
 
 
-
-
-
-
-
-
-
-
-
             var actionForm = $("form");
+            var page = $("input[name='page']"); //상단에 hidden으로 데이터 숨겨있음
+
+            //type은 배열형태로써 변수에 저장하여 보내지지가 않아서 html 소스를 동적 생성하여 추가함.
+
+            var typeKeyword = $("input[name='typeKeyword']"); //상단에 hidden으로 데이터 숨겨있음
+            var region = $("input[name='region']"); //상단에 hidden으로 데이터 숨겨있음
+            var regionKeyword = $("input[name='regionKeyword']"); //상단에 hidden으로 데이터 숨겨있음
+            var minCost = $("input[name='minCost']"); //상단에 hidden으로 데이터 숨겨있음
+            var maxCost = $("input[name='maxCost']"); //상단에 hidden으로 데이터 숨겨있음
+
+
 
 
             $(".removeBtn").click(function () {
@@ -277,25 +284,39 @@
                 actionForm.attr("action", "/board/modify").attr("method", "post");
                 actionForm.submit();
 
-                console.log("eeeee")
             });
 
 
             $(".listBtn").click(function () {
 
-                var page = $("input[name='page']"); //상단에 hidden으로 데이터 숨겨있음
-                var type = $("input[name='type']"); //상단에 hidden으로 데이터 숨겨있음
-                var keyword = $("input[name='keyword']"); //상단에 hidden으로 데이터 숨겨있음
 
-
-                actionForm.empty();
+                actionForm.empty(); //기존 폼 삭제. 리스트로 갈 경우 게시글에 대한 내용은 필요 없으므로 get형식에서의 url 정리를 위해
                 actionForm.append(page);
-                actionForm.append(type);
-                actionForm.append(keyword);
+
+                //type 데이터 추가
+                var str = "";
+
+                var t0 = [[${requestDTO.getType(0)}]];
+                var t1 = [[${requestDTO.getType(1)}]];
+                var t2 = [[${requestDTO.getType(2)}]];
+
+                str += '<input type="hidden" name="type" value="'+t0+'">';
+                str += '<input type="hidden" name="type" value="'+t1+'">';
+                str += '<input type="hidden" name="type" value="'+t2+'">';
+
+
+
+                actionForm.append(str);
+                actionForm.append(typeKeyword);
+                actionForm.append(region);
+                actionForm.append(regionKeyword);
+                actionForm.append(minCost);
+                actionForm.append(maxCost);
+
+
 
                 actionForm.attr("action", "/board/list").attr("method", "get");
 
-                //console.log(actionForm.html());
                 actionForm.submit();
             });
 

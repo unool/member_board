@@ -38,7 +38,11 @@
                 <th scope="row">
                     <img th:if="${dto.imageList.size() > 0 && dto.imageList[0].path != null}"
                          th:src="|/review/getPhoto?fileName=${dto.imageList[0].getThumImgURL()}|">
-                    <a th:href="@{/review/reviewRead(rro= ${dto.rro}, page = ${result.page}, type=${requestDTO.type},keyword = ${requestDTO.keyword})}">
+
+                    <a th:href="@{/review/reviewRead(rro= ${dto.rro}, page = ${result.page}, type=${requestDTO.type},
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
                         [[${dto.title}]]</a>
                 </th>
 
@@ -65,14 +69,19 @@
             <li th:class=" 'page-item ' + ${result.page == page? 'active' : ''} "
                 th:each="page: ${result.pageList}">
                 <a class="page-link" th:href="@{/review/reviewList(page= ${page},type=${requestDTO.type},
-                keyword = ${requestDTO.keyword})}">
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
 
                     [[${page}]]
                 </a>
             </li>
 
             <li class="page-item" th:if="${result.next}">
-                <a class="page-link" th:href="@{/review/reviewList(page= ${result.end + 1})}">Next</a>
+                <a class="page-link" th:href="@{/review/reviewList(page= ${result.end + 1}, type=${requestDTO.type},
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">Next</a>
             </li>
 
 

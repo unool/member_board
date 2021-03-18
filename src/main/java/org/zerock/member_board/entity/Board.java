@@ -30,7 +30,7 @@ public class Board extends BaseEntity{
     private Member writer;
 
     @Column(name = "meeting_costs")
-    private String costs;
+    private Long costs;
 
     @Column(name = "meeting_place")
     private String place;
