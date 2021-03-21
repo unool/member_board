@@ -196,4 +196,28 @@ public class BoardServiceImpl implements BoardService{
         }
 
     }
+
+    @Override
+    public List<BoardDTO> getRecentBoard() {
+
+        List<Board> list = boardRepository.findTop3ByOrderByBnoDesc(); //메소드 이름으로 쿼리 생성
+
+        List<BoardDTO> dtoList = new ArrayList<>();
+
+        for(Board board : list)
+        {
+            BoardDTO boardDTO = BoardDTO.builder()
+                    .bno(board.getBno())
+                    .position(board.getPosition())
+                    .title(board.getTitle())
+                    .content(board.getContent())
+                    .place(board.getPlace())
+                    .costs(board.getCosts())
+                    .build();
+
+            dtoList.add(boardDTO);
+        }
+
+        return dtoList;
+    }
 }

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -87,6 +89,7 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public PageResultDTO<ReviewDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
+
 
         Page<Object[]> result = reviewRepository.getReviewListWithReviewImageMemberBoard(pageRequestDTO.getPageable(Sort.by("rro").descending()));
 
@@ -479,5 +482,44 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         return result;
+    }
+
+    @Override
+    public List<ReviewDTO> getRecentReview() {
+
+        //페이징 처리까진 필요 없지만 Spring Data JPA 에서 limit 이 안되서..
+        Pageable pageable = PageRequest.of(0, 3, Sort.by("rro").descending());
+        Page<Object[]> result = reviewRepository.getReviewListWithReviewImageMemberBoard(pageable);
+
+
+        List<ReviewDTO> dtoList = new ArrayList<>();
+        for(Object[] objects : result)
+        {
+            Review review = (Review) objects[0];
+            ReviewImage reviewImg = (ReviewImage) objects[1];
+            Member member = (Member) objects[2];
+            Board board = (Board) objects[3];
+
+
+
+            Optional<Like> likeResult = likeRepository.findById(review.getRro().toString());
+
+            if(!likeResult.isPresent())
+            {
+                //예외처리
+                continue;
+            }
+
+            Like like = likeResult.get();
+
+            List<ReviewImage> reviewImageList = new ArrayList<>();
+
+            reviewImageList.add(reviewImg);
+            ReviewDTO reviewDTO = entityToDTO(review, reviewImageList, member, board, like);
+
+            dtoList.add(reviewDTO);
+        }
+
+        return dtoList;
     }
 }

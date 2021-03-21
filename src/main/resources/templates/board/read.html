@@ -472,9 +472,12 @@
 
                             if(currentConnectedEmail == writerEmail)
                             {
+                                var strMinCost = minCost == null ? "" : minCost.toString();
+                                var strMaxCost = minCost == null ? "" : minCost.toString();
+
                                 str += '<a href="/board/confirm?bno='+ bno + '&page=' +
                                     page +'&type='+ type +'&typeKeyword=' + typeKeyword + '&region=' + region + '&regionKeyword='+
-                                    regionKeyword + '&minCost=' + minCost.toString() + '&maxCost=' + maxCost.toString() +'">';
+                                    regionKeyword + '&minCost=' + strMinCost + '&maxCost=' + strMaxCost +'">';
 
                                 str += '<button type="button" class="btn btn-primary" id="confirmBtn">확정</button>';
                                 str += '</a>';

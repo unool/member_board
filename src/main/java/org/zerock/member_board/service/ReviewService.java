@@ -105,4 +105,6 @@ public interface ReviewService {
     void clickLikeReview (Long rro);
 
     void removeReviewWithReviewImage(Long rro);
+
+    List<ReviewDTO> getRecentReview();
 }

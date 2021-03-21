@@ -10,6 +10,7 @@ import org.zerock.member_board.entity.redis.Attend;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public interface BoardService {
 
@@ -45,8 +46,6 @@ public interface BoardService {
 
     default BoardDTO entityToDTO(Board board, Member member, Long replyCount, Attend attend){
 
-//        LocalDateTime newDate =  LocalDateTime.parse(board.getLimitDate().toString(), DateTimeFormatter.ISO_DATE_TIME);
-
         BoardDTO boardDTO = BoardDTO.builder()
                 .bno(board.getBno())
                 .title(board.getTitle())
@@ -62,7 +61,6 @@ public interface BoardService {
                 .members(attend.getMembers())
                 .position(board.getPosition())
                 .replyCount(replyCount.intValue())
-//                .limitDate(newDate.toString())
                 .limitDate(board.getLimitDate().toString())
                 .end(board.getEnd())
                 .build();
@@ -73,5 +71,5 @@ public interface BoardService {
 
     void confirm(Long bno);
 
-
+    public List<BoardDTO> getRecentBoard();
 }

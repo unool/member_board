@@ -1,166 +1,148 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
-
-
     <th:block th:fragment="content">
+        <style>
 
-        <h2>Welcom Page</h2>
+            #main_title {
+                width: 100%;
+            }
+
+            #main_title h1 {
+                text-align: center;
+            }
+
+            #sub_title {
+                width: 100%;
+            }
+
+            #sub_title h1 {
+                text-align: center;
+                font-size: x-large;
+            }
+
+            .category {
+                width: 100%;
+                background-color: #6c757d;
+                margin-bottom: 1%;
+            }
+
+            .category h1 {
+                font-weight: bold;
+                font-size: large;
+                color: white;
+                margin-left: 5%;
+                margin-top: 1%;
+            }
+        </style>
+
+
+        <!-- Page Content -->
+        <div class="container">
+
+            <div id="main_title">
+                <h1 class="mt-4"> Meeting Appointment Page </h1>
+            </div>
+            <br>
+            <div id="sub_title">
+                <h1> Attend various meetings and make friends! </h1>
+            </div>
+
+
+            <div class="row">
+                <div class="category">
+                    <h1>Recent Board</h1>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4" th:each="boardDTO : ${boardDTOList}">
+                    <div class="card h-100">
+                        <div class="card-img-top">
+                            <div th:id="map+ ${boardDTO.bno}" style="width:100%;height:400px;"></div>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <a href="#">[[${boardDTO.title}]]</a>
+                            </h4>
+                            <h5>[[${boardDTO.content}]]</h5>
+                            <p class="card-text">[[${boardDTO.place}]]</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">참여 금액 : [[${boardDTO.costs}]]</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="category">
+                    <h1>Recent Review</h1>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4" th:each="reviewDTO : ${reviewDTOList}">
+                    <div class="card h-100">
+                        <a href="#" style="text-decoration:none">
+                            <img class="card-img-top" style="width: 100%; height: 400px;" th:if="${reviewDTO.imageList.size() > 0}"
+                                         th:src="|/review/getPhoto?fileName=${reviewDTO.imageList[0].getThumImgURL()}|">
+                            <div class="card-img-top"  th:if="${reviewDTO.imageList.size() == 0}" style="width:100%;height:400px;background-color: #6c757d;">
+                                <div style=" display:table;width:100%;height:100%;text-align: center;">
+                                    <h5 style="color: white; display: table-cell;vertical-align: middle;" >This post does not have an image</h5>
+                                </div>
+
+                            </div>
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <a href="#">[[${reviewDTO.title}]]</a>
+                            </h4>
+                            <p class="card-text">[[${reviewDTO.content}]]</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted"><img src="/img/icons8-facebook-like-24_fill.png"> [[${reviewDTO.like.likeCnt}]]</small>
+                        </div>
+                    </div>
+                </div>
 
 
 
-
-        <div id="map" style="width:100%;height:400px;"></div>
-
+            </div>
 
 
-
-        <input type="text" id="address">
-        <button type="submit" id="submit">submit</button>
-
+        </div>
 
         <script th:inline="javascript">
 
-            var jibunAdd;
-            var roadAdd;
+            function makeMapAndMarker(boardDTOList) {
+
+                $.each(boardDTOList, function(index, boardDTO){
+
+                    const position = boardDTO.position;
+                    const arr = position.split(",");
+
+                    const lat = arr[0].split(":");
+                    const lng = arr[1].split(":");
+                    const bno = boardDTO.bno;
 
 
-            var map = new naver.maps.Map("map", {
-                center: new naver.maps.LatLng(37.3595316, 127.1052133),
-                zoom: 15,
-                mapTypeControl: true
-            });
+                    var map = new naver.maps.Map('map' + bno.toString(), {
+                        center: new naver.maps.LatLng(lat[1], lng[1]),
+                        zoom: 15
+                    });
 
-            var infoWindow = new naver.maps.InfoWindow({
-                anchorSkew: true
-            });
+                    var marker = new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lat[1], lng[1]),
+                        map: map
+                    });
 
-            map.setCursor('pointer');
-
-            function searchCoordinateToAddress(latlng) {
-
-                infoWindow.close();
-
-                naver.maps.Service.reverseGeocode({
-                    coords: latlng,
-                    orders: [
-                        naver.maps.Service.OrderType.ADDR,
-                        naver.maps.Service.OrderType.ROAD_ADDR
-                    ].join(',')
-                }, function(status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!latlng) {
-                            return alert('ReverseGeocode Error, Please check latlng');
-                        }
-                        if (latlng.toString) {
-                            return alert('ReverseGeocode Error, latlng:' + latlng.toString());
-                        }
-                        if (latlng.x && latlng.y) {
-                            return alert('ReverseGeocode Error, x:' + latlng.x + ', y:' + latlng.y);
-                        }
-                        return alert('ReverseGeocode Error, Please check latlng');
-                    }
-
-                    var address = response.v2.address,
-                        htmlAddresses = [];
-
-                    if (address.jibunAddress !== '') {
-                        jibunAdd = address.jibunAddress;
-                        htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
-                    }
-
-                    if (address.roadAddress !== '') {
-                        roadAdd = address.roadAddress;
-                        htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
-
-                    infoWindow.open(map, latlng);
-                });
+                })
             }
+            $(document).ready(function () {
 
-            function searchAddressToCoordinate(address) {
-                naver.maps.Service.geocode({
-                    query: address
-                }, function(status, response) {
-                    if (status === naver.maps.Service.Status.ERROR) {
-                        if (!address) {
-                            return alert('Geocode Error, Please check address');
-                        }
-                        return alert('Geocode Error, address:' + address);
-                    }
+                makeMapAndMarker([[${boardDTOList}]]);
 
-                    if (response.v2.meta.totalCount === 0) {
-                        return alert('No result.');
-                    }
-
-                    var htmlAddresses = [],
-                        item = response.v2.addresses[0],
-                        point = new naver.maps.Point(item.x, item.y);
-
-                    if (item.roadAddress) {
-                        roadAdd = item.roadAddress;
-                        htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
-                    }
-
-                    if (item.jibunAddress) {
-                        jibunAdd = item.jibunAddress;
-                        htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
-                    }
-
-                    if (item.englishAddress) {
-                        htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
-                    }
-
-                    infoWindow.setContent([
-                        '<div style="padding:10px;min-width:200px;line-height:150%;">',
-                        '<h4 style="margin-top:5px;">검색 주소 : '+ address +'</h4><br />',
-                        htmlAddresses.join('<br />'),
-                        '</div>'
-                    ].join('\n'));
-
-                    map.setCenter(point);
-                    infoWindow.open(map, point);
-                });
-            }
-
-            function initGeocoder() {
-                if (!map.isStyleMapReady) {
-                    return;
-                }
-
-                map.addListener('click', function(e) {
-                    searchCoordinateToAddress(e.coord);
-                });
-
-                $('#address').on('keydown', function(e) {
-                    var keyCode = e.which;
-
-                    if (keyCode === 13) { // Enter Key
-                        searchAddressToCoordinate($('#address').val());
-                    }
-                });
-
-                $('#submit').on('click', function(e) {
-                    e.preventDefault();
-
-                    searchAddressToCoordinate($('#address').val());
-                });
-
-                searchAddressToCoordinate('정자동 178-1');
-            }
-
-            naver.maps.onJSContentLoaded = initGeocoder;
-            naver.maps.Event.once(map, 'init_stylemap', initGeocoder);
+            })
 
         </script>
-
 
     </th:block>
 

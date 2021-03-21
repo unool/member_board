@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("select r, ri, m, b from Review r left outer join ReviewImage ri on ri.review = r left outer join " +
-            "r.writer m left outer join r.board b group by r") //첫번째 걸리 이미지 아무거나 하나 가져오게
+            "r.writer m left outer join r.board b group by r") //첫번째 걸리는 이미지 아무거나 하나 가져오게, group by r로 묶어서
     Page<Object[]> getReviewListWithReviewImageMemberBoard(Pageable pageable);
 
     @Query("select r, ri, m, b from Review r left outer join ReviewImage ri on ri.review = r left outer join " +
@@ -33,4 +33,7 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
                                   @Param("content") String content,
                                   @Param("rro") Long rro);
 
+
+//    @Query("select r, ri from Review r left outer join ReviewImage ri on ri.review = r group by r") //이미지 하나만 가져오면 됨
+//    List<Object[]> getRecentReviewReviewImage()
 }
