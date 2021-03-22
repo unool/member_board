@@ -56,9 +56,79 @@
                    th:href="@{/member/logout}"><h0>Logout</h0></a>
 
             </div>
-            <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Metting Board</a>
-            <a th:href="@{/review/reviewList}" class="list-group-item list-group-item-action bg-light">Metting Review</a>
+            <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Meeting Board</a>
+            <a th:href="@{/review/reviewList}" class="list-group-item list-group-item-action bg-light">Meeting Review</a>
 
+
+
+            <div class="chat_list_wrap" style="overflow:scroll; height:400px;">
+                <div class="header">
+                    LIVE CHAT
+                </div>
+                <div class="search">
+                    <input type="text" placeholder="이메일/아이피 검색" />
+                </div>
+                <div class="list">
+                    <ul>
+                        <li>
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="profile_td">
+                                        <!--Img-->
+                                        <img src="./images/profile_preview.png" />
+                                    </td>
+                                    <td class="chat_td">
+                                        <!--Email & Preview-->
+                                        <div class="email">
+                                            kkotkkio@gmail.com
+                                        </div>
+                                        <div class="chat_preview">
+                                            안녕하세요~
+                                        </div>
+                                    </td>
+                                    <td class="time_td">
+                                        <!--Time & Check-->
+                                        <div class="time">
+                                            2016.09.29 17:54
+                                        </div>
+                                        <div class="check">
+                                            <p> </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                        <li>
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td class="profile_td">
+                                        <!--Img-->
+                                        <img src="./images/profile_preview.png" />
+                                    </td>
+                                    <td class="chat_td">
+                                        <!--Email & Preview-->
+                                        <div class="email">
+                                            kkotkkio@gmail.com
+                                        </div>
+                                        <div class="chat_preview">
+                                            안녕하세요~
+                                        </div>
+                                    </td>
+                                    <td class="time_td">
+                                        <!--Time & Check-->
+                                        <div class="time">
+                                            2016.09.29 17:54
+                                        </div>
+                                        <div class="check">
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <!-- /#sidebar-wrapper -->
