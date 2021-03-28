@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset = UTF-8"/>
+    <title>Chat Board </title>
+    <link rel='stylesheet' href='/webjars/bootstrap/3.3.7/css/bootstrap.min.css'>
+
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script th:src="@{/websocket/app.js}"></script>
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--            <a class="navbar-brand" id = "board" href = "javascript:goBoard()">게시판</a>-->
+            <h class="navbar-brand">채팅</h>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div class="alert alert-success" id="successMessage" style="display : none">
+        <strong>메세지 전송에 성공했습니다.</strong>
+    </div>
+    <div class="alert alert-danger" id="failMessage" style="display : none">
+        <strong>메세지 전송에 실패했습니다. 확인 후 다시 시도해 주세요.</strong>
+    </div>
+    <div class="container bootstrap snippet">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="portlet portlet-default">
+                    <div class="portlet-title">
+                        <h4><i class="fa fa-circle text-green">채팅방</i></h4>
+                        <hr>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="chat" class="panel-collapse collapse in">
+
+
+                    <div id="space" class="portlet-body chat-widget"
+                         style="overflow-y : auto; width:auto; height:500px;">
+                    </div>
+                    <div class="portlet-footer">
+                        <div class="row">
+                            <div class="form-group col-xs-4">
+                            </div>
+                        </div>
+                        <div class="row" style="height:90px">
+                            <div class="form-group col-xs-10">
+                                <textarea style="height:80px;" id="message" class="form-control"
+                                          placeholder="메세지를 입력하세요." maxlength="100"></textarea>
+                            </div>
+                            <div class="form-group col-xs-2">
+                                <button id="sendBtn" type="button" class="btn btn-default pull-right" onclick="sendServer()">전송</button>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pop" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">알림!</h4>
+            </div>
+            <div class="modal-body">
+                페이지를 나가면 채팅기록이 사라집니다. 정말로 종료하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="y">예</button>
+                <button type="button" class="btn btn-default" id="n">아니오</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+
+    var chatManager = null;
+
+    const roomSubAdd = '/cli/room/' +[[${dto.roomID}]];
+    const roomSendAdd = '/app/room/' + [[${dto.roomID}]];
+
+
+    function ChatManager(session) {
+        this.appClient = null;
+        this.myEmail = session == null ? '' : session.email;
+        this.rooomID = [[${dto.roomID}]];
+    }
+
+    function appReceiveCallback(msg){
+
+        log(msg);
+
+        var jsonData = JSON.parse(msg.body);
+
+        var user = [[${session['user']}]];
+
+
+
+        if(user != null)
+        {
+            switch (jsonData.msg_type)
+            {
+                case 'ROOM_CHAT':
+                    room_chat(jsonData);
+                    break;
+                case 'USER_OUT': //req_member 상관없이 처리한다. 어차피 해당 패킷은 남아있는 유저만 받을것이기 때문
+                    user_out();
+                    break;
+            }
+        }
+
+    }
+
+    function user_out(){
+        replaceSendTag();
+        alert('상대 유저가 방을 나갔습니다');
+    }
+
+    function replaceSendTag(){
+        var str = '';
+        str += '<textarea style="height:80px;" id="message" className="form-control" ' +
+            'placeholder="메세지를 입력하세요." maxLength="100" readonly>';
+        str += '</textarea>';
+        $('#message').replaceWith(str);
+
+        str = '';
+        $('#sendBtn').replaceWith(str);
+    }
+
+    function room_chat(jsonData){
+        var req_member = jsonData.data.req_member.toString();
+        var msg = jsonData.data.message.toString();
+        space = document.getElementById("space");
+        space.innerHTML = space.innerHTML + "<div class='row'> <div class='col-lg-12'> <div class='media'> <div class='media-body'> <h4 class='media-heading'>" +
+            "<h4 class='small pull-right'></h4> </h4> </div> <p>|" + req_member + "|</p> <p>" +
+            msg + "</p> </div> </div> </div> <hr>";
+        space.scrollTop = space.scrollHeight;
+    }
+
+    function sendServer(){
+        var input = $('#message').val();
+        var message = new Object();
+        message.msg_type = 'ROOM_CHAT';
+        message.data = {req_member : chatManager.myEmail, message : input};
+
+        send(roomSendAdd, message);
+    }
+
+    function send(destination, data) {
+
+
+        chatManager.appClient.send(destination, {}, JSON.stringify(data));
+    }
+
+
+    function connect() {
+        var socket = new SockJS('/ws_connect');
+        chatManager.appClient = Stomp.over(socket);
+        chatManager.appClient.connect({userEmail: chatManager.myEmail}, function (frame) {
+
+
+            chatManager.appClient.subscribe(roomSubAdd, function (msg) {
+                appReceiveCallback(msg);
+            });
+        });
+    }
+
+    function log(log){
+        console.log("&&===========================&& "+ log + "&&===========================&& ");
+    }
+
+    $(document).ready(function () {
+
+        var session = [[${session['user']}]];
+
+        chatManager = new ChatManager(session);
+
+        if(chatManager.myEmail == '')
+        {
+
+            return;
+        }
+
+
+        connect();
+
+    })
+
+</script>
+
+</body>
+
+
+</html>

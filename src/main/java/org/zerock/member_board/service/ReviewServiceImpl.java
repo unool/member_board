@@ -465,8 +465,6 @@ public class ReviewServiceImpl implements ReviewService{
             File file = new File( srcFileName);
 
 
-            //삭제
-            System.out.println("파일종류 ===== "+Files.probeContentType(file.toPath()));
 
 
 

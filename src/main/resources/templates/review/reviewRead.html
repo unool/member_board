@@ -103,8 +103,8 @@
                     type : 'Post',
                     dataType : 'text'
                     ,success : function(result) {
-                        console.log("clickLike")
-                        console.log(result);
+
+
                         getLikeData();
                     }
                     ,error : function(error){
@@ -134,7 +134,7 @@
                     type : 'Post',
                     dataType : 'json'
                     ,success : function(result) {
-                        console.log("getLikeData")
+
                         if(result.contains)
                         {
                             str += '<a href="javascript:void(0)" onclick="clickLike()">';

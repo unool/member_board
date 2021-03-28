@@ -34,17 +34,13 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
         if(result.isPresent())
         {
             member = result.get();
-
             httpSession.setAttribute("user",new SessionUser(member));
-
-
         }
         else
         {
             member = Member.builder().build();
             //예외처리
         }
-
         return member;
     }
 

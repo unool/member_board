@@ -123,7 +123,7 @@
 
 
         <script th:inline="javascript">
-            console.log("tv");
+
   //
 
   var addrs = [[${dto.place}]];
@@ -350,7 +350,7 @@
 
             function loadJSONData() {
 
-                console.log("loadJSONData1111");
+
                 var bno = [[${dto.bno}]];
 
                 var listGroup = $(".replyList");
@@ -377,7 +377,7 @@
                     listGroup.html(str);
                 })
 
-                console.log("loadJSONData2222");
+
             }
 
 
@@ -422,7 +422,7 @@
 
             function getAttend(currentConnectedEmail){
 
-                console.log("getAttend111");
+
 
 
                 var writerEmail = [[${dto.writerEmail}]];
@@ -444,7 +444,7 @@
                         var attend = result['AttendDTO'];
                         var currentConnEmail = result['ConnectedEmail'];
 
-                        console.log("정상22");
+
 
                         str += '<div class="form-group">';
                         str += '<input class="form-control-sm" id="attendState" value="'+attend.currentCnt+
@@ -498,7 +498,7 @@
                                         var reqCnt = parseInt(attend.requiredCnt);
                                         if(curCnt < reqCnt)
                                         {
-                                            console.log(currentConnectedEmail);
+
                                             str += '<div class="form-group">';
                                             str += '<button type="button" class="btn btn-primary" id="attendBtn" ' +
                                                 'onclick="attendMember('+paraEmail+')">' +
@@ -514,7 +514,7 @@
 
 
 
-                        console.log("직전");
+
                         $('#attendDiv').html(str);
 
                     }
@@ -566,7 +566,7 @@
 
 
             $(document).ready(function(){
-                console.log("ready1111");
+
                 loadJSONData();
 
                 var connectedEmail = $('.connectedEmail').val().toString();
@@ -584,7 +584,7 @@
 
                 getAttend(email);
 
-                console.log("ready222");
+
             })
 
 

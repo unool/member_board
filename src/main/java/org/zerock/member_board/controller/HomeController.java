@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.zerock.member_board.service.BoardService;
 import org.zerock.member_board.service.ReviewService;
 
@@ -23,15 +22,12 @@ public class HomeController {
     int rctBoardCnt = 3;
 
     @GetMapping("/")
-    public String index(Model model){
-
+    public String index(Model model, HttpSession httpSession){
         model.addAttribute("boardDTOList",
                 boardService.getRecentBoard());
 
         model.addAttribute("reviewDTOList",
                 reviewService.getRecentReview());
-
-
         return "index";
     }
 

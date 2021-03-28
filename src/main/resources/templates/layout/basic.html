@@ -2,205 +2,425 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <th:block th:fragment="setContent(content)">
-<head>
+    <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
-    <title>Appointment Meeting Matching Site</title>
+        <title>Appointment Meeting Matching Site</title>
 
-    <!-- Bootstrap core CSS -->
-    <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+        <!-- Bootstrap core CSS -->
+        <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link th:href="@{/css/simple-sidebar.css}" rel="stylesheet">
+        <!-- Custom styles for this template -->
+        <link th:href="@{/css/simple-sidebar.css}" rel="stylesheet">
 
-    <!-- Bootstrap core JavaScript -->
-    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-
-
+        <!-- Bootstrap core JavaScript -->
+        <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+        <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
 
+        <!--    추가 css-->
+        <link th:href="@{/css/custom-css.css}" rel="stylesheet">
 
-    <!--    테스트-->
-    <link th:href="@{/css/custom-css.css}" rel="stylesheet">
+        <!--    웹소켓-->
+<!--        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
+<!--        <link href="/main.css" rel="stylesheet">-->
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script th:src="@{/websocket/app.js}"></script>
+
+        <!-- 네이버 맵 api -->
+        <script type="text/javascript"
+                src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2rnn9z0mqa&submodules=geocoder"></script>
+
+        <!-- #네이버 맵 api -->
 
 
+    </head>
+
+    <body>
+
+    <div class="d-flex" id="wrapper">
+
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading"><a th:href="@{/}">AppMeeting Matching </a></div>
+            <div class="list-group list-group-flush">
+                <div>
+                    <a sec:authorize="isAnonymous()" class="list-group-item list-group-item-action bg-light loginBtn"
+                       th:href="@{/member/login}">Login</a>
+                    <a sec:authorize="isAuthenticated()"
+                       class="list-group-item list-group-item-action bg-light logoutBtn"
+                       th:href="@{/member/logout}">
+                        <h0>Logout</h0>
+                    </a>
+
+                </div>
+                <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Meeting Board</a>
+                <a th:href="@{/review/reviewList}" class="list-group-item list-group-item-action bg-light">Meeting
+                    Review</a>
 
 
-<!-- 네이버 맵 api -->
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=2rnn9z0mqa&submodules=geocoder"></script>
+<!--                <div id="member_list"></div>-->
+                <div class="chat_list_wrap" style="overflow:scroll; height:300px; margin-top: 100px">
+                    <div class="header">
+                        Loging Member
+                    </div>
+                    <!--                <div class="search">-->
+                    <!--                    <input type="text" placeholder="이메일/아이피 검색" />-->
+                    <!--                </div>-->
 
-<!-- #네이버 맵 api -->
+                    <div class="list" sec:authorize="isAuthenticated()">
+                        <ul >
 
-
-
-
-</head>
-
-<body>
-
-<div class="d-flex" id="wrapper">
-
-    <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
-        <div class="sidebar-heading"> <a th:href="@{/}">AppMeeting Matching </a></div>
-        <div class="list-group list-group-flush">
-            <div>
-                <a sec:authorize="isAnonymous()" class="list-group-item list-group-item-action bg-light loginBtn"
-                   th:href="@{/member/login}">Login</a>
-                <a sec:authorize="isAuthenticated()" class="list-group-item list-group-item-action bg-light logoutBtn"
-                   th:href="@{/member/logout}"><h0>Logout</h0></a>
+                        </ul>
+                    </div>
+                    <div sec:authorize="isAnonymous()">
+                        <h5 style="color : #4e555b; display: table-cell;vertical-align: middle;" >please login</h5>
+                    </div>
+                </div>
 
             </div>
-            <a th:href="@{/board/list}" class="list-group-item list-group-item-action bg-light">Meeting Board</a>
-            <a th:href="@{/review/reviewList}" class="list-group-item list-group-item-action bg-light">Meeting Review</a>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <div sec:authorize="isAnonymous()">
+                                <h0 class="nav-link">Guest님 환영합니다!</h0>
+                            </div>
+                            <div sec:authorize="isAuthenticated()">
+                                <h0 class="nav-link">[[${session['user'].email}]]님 환영합니다!</h0>
+                            </div>
 
 
-
-            <div class="chat_list_wrap" style="overflow:scroll; height:400px;">
-                <div class="header">
-                    LIVE CHAT
-                </div>
-                <div class="search">
-                    <input type="text" placeholder="이메일/아이피 검색" />
-                </div>
-                <div class="list">
-                    <ul>
-                        <li>
-                            <table cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td class="profile_td">
-                                        <!--Img-->
-                                        <img src="./images/profile_preview.png" />
-                                    </td>
-                                    <td class="chat_td">
-                                        <!--Email & Preview-->
-                                        <div class="email">
-                                            kkotkkio@gmail.com
-                                        </div>
-                                        <div class="chat_preview">
-                                            안녕하세요~
-                                        </div>
-                                    </td>
-                                    <td class="time_td">
-                                        <!--Time & Check-->
-                                        <div class="time">
-                                            2016.09.29 17:54
-                                        </div>
-                                        <div class="check">
-                                            <p> </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
                         </li>
-                        <li>
-                            <table cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td class="profile_td">
-                                        <!--Img-->
-                                        <img src="./images/profile_preview.png" />
-                                    </td>
-                                    <td class="chat_td">
-                                        <!--Email & Preview-->
-                                        <div class="email">
-                                            kkotkkio@gmail.com
-                                        </div>
-                                        <div class="chat_preview">
-                                            안녕하세요~
-                                        </div>
-                                    </td>
-                                    <td class="time_td">
-                                        <!--Time & Check-->
-                                        <div class="time">
-                                            2016.09.29 17:54
-                                        </div>
-                                        <div class="check">
-
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
+                        <li class="nav-item active">
+                            <a class="nav-link" th:href="@{/}">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                My Page
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
+            </nav>
+
+            <div class="container-fluid">
+
+                <th:block th:replace="${content}"></th:block>
+
+<!--                삭제-->
+                <button type="button" id="appSend"></button>
             </div>
+
         </div>
-    </div>
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <div sec:authorize="isAnonymous()">
-                            <h0 class="nav-link">Guest님 환영합니다!</h0>
-                        </div>
-                        <div sec:authorize="isAuthenticated()">
-                            <h0 class="nav-link" >[[${session['user'].email}]]님 환영합니다!</h0>
-                        </div>
-
-
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" th:href="@{/}">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            My Page
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <div class="container-fluid">
-
-           <th:block th:replace = "${content}"></th:block>
-        </div>
+        <!-- /#page-content-wrapper -->
 
     </div>
-    <!-- /#page-content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
+    <!-- /#wrapper -->
 
 
-<!-- Menu Toggle Script -->
-<script>
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-</script>
+    <!-- Menu Toggle Script -->
+    <script th:inline="javascript">
 
 
 
 
 
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
 
-</body>
+
+        const appSubAdd = '/cli/broad';
+        const appSendAdd = '/app/broad';
+        var childWindow = null;
+        var chatManager = null;
+
+        function ChatManager(session) {
+            this.appClient = null;
+            this.roomClient = null;
+            this.roomAdd = 'aaa';
+            this.myEmail = session == null ? '' : session.email;
+            this.rooomID = '';
+        }
+
+
+        function appReceiveCallback(msg){
+
+            log(msg);
+
+            var jsonData = JSON.parse(msg.body);
+
+            var user = [[${session['user']}]];
+
+            if(user != null)
+            {
+                switch (jsonData.msg_type)
+                {
+                    case 'CHAT_RES':
+
+                        if(jsonData.data.req_result == 'true')
+                        {
+                            if(jsonData.data.chat_member == user.email)
+                            {
+                                if(!confirm("채팅을 수락하시겠습니까?"))
+                                {
+                                    chat_res(false, jsonData)
+                                    return;
+                                }
+                                chat_res(true, jsonData);
+                            }
+                        }
+                        else
+                        {
+                            if(jsonData.data.req_member == user.email) //만약 채팅 취소 됬는데 신청자가 나라면
+                            {
+                                alert("해당 유저에게는 채팅을 신청할 수 없습니다.");
+                            }
+                        }
+                        break;
+                    case 'SUB_RES':
+
+                        makeLoginList(jsonData.data.login_list);
+                        break;
+
+                    case 'ROOM_OPEN':
+
+                        var memberList = jsonData.data.room_member;
+                        // var list = Object.entries(memberList)
+
+                        if(exist(memberList, user.email)) {
+
+                            if(jsonData.data.open.toString() == 'false')
+                            {
+                                alert('채팅이 취소 되었습니다');
+                                return;
+                            }
+
+                            room_open(jsonData);
+                        }
+                        break;
+
+                    // case '':
+                    //     break;
+
+
+
+                }
+            }
+
+
+        }
+
+        function exist(arr, value)
+        {
+            for(var i = 0; i < arr.length; i++)
+            {
+                if(arr[i] == value)
+                    return true;
+            }
+
+            return false;
+        }
+
+        function room_open(jsonData){
+
+            chatManager.rooomID = jsonData.data.room_id; //room id 저장
+
+            openChildWindow();
+        }
+
+        function openChildWindow()
+        {
+
+
+            var url = '';
+
+            url += '/chat/chatroom?appSubAdd=' + appSubAdd +'&appSendAdd='+appSendAdd+'&roomID='
+                + chatManager.rooomID;
+
+
+
+            // window.name = "부모창 이름";
+            window.name = "parentForm";
+            // window.open("open할 window", "자식창 이름", "팝업창 옵션");
+            childWindow = window.open(url);
+
+            //예외처리 팝업 설정이 안되있어서 아무런 리턴을 보내지 않을 경우 서버에서 자를것.
+
+
+
+            // setChildValues();
+        }
+
+        function setChildValues(){
+            childWindow.document.getElementById("room_id").value = chatManager.rooomID;
+        }
+
+
+        function chat_res(joinResult , jsonData){
+
+            var email = getMyEmail();
+
+            if(email == null)
+            {
+                //로그인 풀림 예외처리
+                return;
+            }
+
+
+            var message = new Object();
+            message.msg_type = 'JOIN_REQ';
+            message.data = {join : joinResult, req_member : email, room_id : jsonData.data.room_id};
+
+            send(appSendAdd, message);
+        }
+
+        function makeLoginList (list){
+            $('.list ul').html('')
+            var str ='';
+
+            for(let i = 0 ; i < list.length; i++)
+            {
+                str += '<li>';
+                str += '<table cellpadding="0" cellspacing="0">';
+                str += '<tr>';
+                str += '<td class="chat_td" data-email=' +list[i] +'>';
+                str += '<div class="email">'+ list[i]+'</div>';
+                str += '</td>';
+                str += '</tr>';
+                str += '</table>';
+                str += '</li>';
+            }
+
+            $('.list ul').html(str);
+        }
+
+
+
+        function ChatMessage(msg_type, data) {
+            this.msg_type = msg_type;
+            this.data = data;
+        }
+
+        function send(destination,data) {
+
+
+            chatManager.appClient.send(destination, {}, JSON.stringify(data));
+
+        }
+
+
+
+        function connect() {
+            var socket = new SockJS('/ws_connect');
+            chatManager.appClient = Stomp.over(socket);
+            chatManager.appClient.connect({userEmail: chatManager.myEmail}, function (frame) {
+
+                chatManager.appClient.subscribe(appSubAdd, function (msg) {
+                    appReceiveCallback(msg);
+                });
+            });
+        }
+
+        $('.list').on('click', 'li td',function(e) //로그인 리스트에서 눌렸을때
+        {
+
+
+            var email=$(this).attr("data-email");
+
+            var myEmail = getMyEmail();
+            if(email == myEmail)
+            {
+                return;
+            }
+
+
+            reqChat(email);
+        })
+
+        function reqChat(chatMember){ //웹소켓 채팅 신청
+            if(!confirm("채팅 신청을 하시겠습니까?"))
+            {
+                return;
+            }
+
+            var email = getMyEmail();
+            if(email == null)
+            {
+                return;
+            }
+
+            var message = new Object();
+            message.msg_type = 'CHAT_REQ';
+            message.data = {chat_member : chatMember, req_member : email};
+
+            send(appSendAdd,message);
+        }
+
+        function getMyEmail(){
+            var session = [[${session['user']}]];
+
+            if(session == null)
+            {
+                return null;
+            }
+
+            return session.email;
+        }
+
+        function log(log){
+            console.log("&&===========================&& "+ log + "&&===========================&& ");
+        }
+
+        $(document).ready(function () {
+            var session = [[${session['user']}]];
+
+            chatManager = new ChatManager(session);
+            if(chatManager.myEmail == '')
+            {
+                return;
+            }
+            connect();
+
+        })
+
+
+
+    </script>
+
+
+    </body>
 </th:block>
 </html>

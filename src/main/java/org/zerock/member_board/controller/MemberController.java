@@ -55,12 +55,6 @@ public class MemberController {
     }
 
 
-    @PostMapping("/test")
-    public String test(MemberDTO dto){
-        memberService.registerMember(dto);
-
-        return "redirect:/";
-    }
 
 
 }

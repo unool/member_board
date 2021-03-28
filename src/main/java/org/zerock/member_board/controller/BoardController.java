@@ -41,10 +41,12 @@ public class BoardController {
     private  AttendService attendService;
 
     @GetMapping("/list")
-    public void list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model)
-    {
-        System.out.println("===================들어왔다  +");
+    public void list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model) throws InterruptedException {
+
         model.addAttribute("result", boardService.getList(pageRequestDTO));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("=================== 콘트롤러");
+        System.out.println(" : "+authentication);
 
     }
 

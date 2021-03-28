@@ -10,17 +10,19 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.Participation;
-import org.zerock.member_board.entity.User;
+
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.repository.AttendRepository;
 import org.zerock.member_board.repository.BoardRepository;
@@ -30,12 +32,11 @@ import org.zerock.member_board.repository.ReplyRepository;
 import org.zerock.member_board.repository.querydsl.SearchBoardRepositoryImpl;
 import org.zerock.member_board.service.util.MemberHandler;
 
-import javax.persistence.RollbackException;
-import javax.servlet.http.HttpSession;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+
 
 @Transactional
 @Service
@@ -101,8 +102,16 @@ public class BoardServiceImpl implements BoardService{
 //    }
 
 
+
     @Override
     public PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("=================== 서비스");
+        System.out.println(" : "+authentication);
+
+
 
         Page<Object[]> result = searchBoardRepository.searchBoard(pageRequestDTO.getType(), pageRequestDTO.getTypeKeyword(),
                 pageRequestDTO.isRegion(), pageRequestDTO.getRegionKeyword(), pageRequestDTO.getMinCost(), pageRequestDTO.getMaxCost(),
