@@ -61,7 +61,7 @@
                         </div>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="#">[[${boardDTO.title}]]</a>
+                                <a th:href="@{/board/read(bno= ${boardDTO.bno})}" style="text-decoration: none">[[${boardDTO.title}]]</a>
                             </h4>
                             <h5>[[${boardDTO.content}]]</h5>
                             <p class="card-text">[[${boardDTO.place}]]</p>
@@ -81,7 +81,7 @@
 
                 <div class="col-lg-4 col-md-6 mb-4" th:each="reviewDTO : ${reviewDTOList}">
                     <div class="card h-100">
-                        <a href="#" style="text-decoration:none">
+                        <a th:href="@{/review/reviewRead(rro= ${reviewDTO.rro})}" style="text-decoration: none">
                             <img class="card-img-top" style="width: 100%; height: 400px;" th:if="${reviewDTO.imageList.size() > 0}"
                                          th:src="|/review/getPhoto?fileName=${reviewDTO.imageList[0].getThumImgURL()}|">
                             <div class="card-img-top"  th:if="${reviewDTO.imageList.size() == 0}" style="width:100%;height:400px;background-color: #6c757d;">
@@ -93,7 +93,7 @@
                         </a>
                         <div class="card-body">
                             <h4 class="card-title">
-                                <a href="#">[[${reviewDTO.title}]]</a>
+                                <a th:href="@{/review/reviewRead/(rro= ${reviewDTO.rro})}" style="text-decoration: none">[[${reviewDTO.title}]]</a>
                             </h4>
                             <p class="card-text">[[${reviewDTO.content}]]</p>
                         </div>

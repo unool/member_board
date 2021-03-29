@@ -35,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/replies/**","/board/list","/board/read","/css/**","/login/**",
                         "/vendor/**","/modal/**","/member/**","/login/**",
                         "/review/**","/img/**","/attend/getAttend","/websocket/**",
-                        "/ws_sock/**","/chat/**","/html/**").permitAll()
-                .anyRequest().authenticated()
+                        "/ws_sock/**","/chat/**","/html/**","/webjars/**").permitAll()
+//                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/member/login")

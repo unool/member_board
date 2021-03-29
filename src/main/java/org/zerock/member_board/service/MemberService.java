@@ -25,4 +25,5 @@ public interface MemberService {
         return member;
     }
 
+    MemberDTO checkRegisterID(String email);
 }

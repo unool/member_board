@@ -8,6 +8,7 @@ import org.zerock.member_board.dto.ReplyDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Reply;
 import org.zerock.member_board.repository.ReplyRepository;
+import org.zerock.member_board.service.util.MemberHandler;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,20 +43,67 @@ public class ReplyServiceImpl implements ReplyService{
     }
 
     @Override
-    public void modify(ReplyDTO replyDTO) {
+    public Boolean modify(ReplyDTO replyDTO) {
+
+        String userEmail = MemberHandler.GetMemberEmail();
+
+        if(userEmail == "")
+        {
+            return false;
+        }
+
         Optional<Reply> result = replyRepository.findById(replyDTO.getRno());
+
+
 
         if(result.isPresent())
         {
             Reply reply = result.get();
+
+            if(!reply.getReplyer().equals(userEmail))
+            {
+                return false;
+            }
+
             reply.changeContent(replyDTO.getText());
         }
+        else
+        {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
-    public void remove(Long rno) {
-        replyRepository.deleteById(rno);
+    public Boolean remove(Long rno) {
 
+        String userEmail = MemberHandler.GetMemberEmail();
+
+        if(userEmail == "")
+        {
+            return false;
+        }
+
+        Optional<Reply> result = replyRepository.findById(rno);
+
+        if(result.isPresent())
+        {
+            Reply reply = result.get();
+
+            if(!reply.getReplyer().equals(userEmail))
+            {
+                return false;
+            }
+
+            replyRepository.delete(reply);
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
     }
 
 

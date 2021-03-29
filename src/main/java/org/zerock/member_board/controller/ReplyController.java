@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.ReplyDTO;
 import org.zerock.member_board.service.ReplyService;
+import org.zerock.member_board.service.util.LogManager;
 
 import java.util.List;
 
@@ -41,17 +42,39 @@ public class ReplyController {
     @DeleteMapping("/{rno}")
     public ResponseEntity<Long> delete(@PathVariable Long rno){
 
-        replyService.remove(rno);
+        Boolean result = replyService.remove(rno);
 
-        return new ResponseEntity<>(rno, HttpStatus.OK);
+        HttpStatus returnStatus = null;
+        if(result)
+        {
+            returnStatus = HttpStatus.OK;
+        }
+        else
+        {
+            returnStatus = HttpStatus.FORBIDDEN;
+        }
+
+
+        return new ResponseEntity<>(rno, returnStatus);
     }
 
     @PutMapping("/{rno}")
     public ResponseEntity<Long> modify(@RequestBody ReplyDTO replyDTO){
 
-        replyService.modify(replyDTO);
+        Boolean result = replyService.modify(replyDTO);
 
-        return new ResponseEntity<>(replyDTO.getRno(), HttpStatus.OK);
+        HttpStatus returnStatus = null;
+        if(result)
+        {
+            returnStatus = HttpStatus.OK;
+        }
+        else
+        {
+            returnStatus = HttpStatus.NOT_MODIFIED;
+        }
+
+
+        return new ResponseEntity<>(replyDTO.getRno(), returnStatus);
 
     }
 

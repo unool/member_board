@@ -5,9 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.zerock.member_board.dto.MemberDTO;
 import org.zerock.member_board.service.MemberService;
 
@@ -57,5 +55,13 @@ public class MemberController {
 
 
 
+    @ResponseBody
+    @PostMapping("/checkemail/{email}")
+    public MemberDTO checkemail(@PathVariable String email)
+    {
+        MemberDTO memberDTO = memberService.checkRegisterID(email);
+
+        return memberDTO;
+    }
 
 }

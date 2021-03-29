@@ -12,9 +12,9 @@ public interface ReplyService {
 
     List<ReplyDTO> getList(Long bno);
 
-    void modify(ReplyDTO replyDTO);
+    Boolean modify(ReplyDTO replyDTO);
 
-    void remove(Long rno);
+    Boolean remove(Long rno);
 
     default Reply dtoToEntity(ReplyDTO replyDTO)
     {

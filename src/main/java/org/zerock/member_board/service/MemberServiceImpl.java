@@ -47,6 +47,15 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
     @Override
     public String registerMember(MemberDTO dto) {
 
+        Optional<Member> result = memberRepository.findById(dto.getEmail());
+
+        if(result.isPresent())
+        {
+            //이미 아이디가 존재함.
+            return null;
+        }
+
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         Member member = Member.builder()
@@ -57,6 +66,11 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
                 .auth(dto.getAuth())
                 .kind(dto.getKind())
                 .build();
+
+
+
+
+
         return memberRepository.save(member).getEmail();
     }
 
@@ -74,5 +88,26 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
         memberRepository.deleteById(email);
     }
 
+    @Override
+    public MemberDTO checkRegisterID(String email) {
 
+        Optional<Member> result = memberRepository.findById(email);
+
+        MemberDTO memberDTO = null;
+        if(result.isPresent())
+        {
+           Member member = result.get();
+           memberDTO = MemberDTO.builder()
+                   .email(member.getEmail())
+                   .kind(member.getKind())
+                   .build();
+
+           return memberDTO;
+        }
+
+        memberDTO = MemberDTO.builder()
+                .build();
+
+        return memberDTO;
+    }
 }
