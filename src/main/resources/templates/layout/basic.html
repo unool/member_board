@@ -28,9 +28,11 @@
         <!--    웹소켓-->
 <!--        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
 <!--        <link href="/main.css" rel="stylesheet">-->
+<!--        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
+<!--        <script src="/webjars/jquery/jquery.min.js"></script>-->
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
 
-        <script type="text/javascript" src="/webjars/sockjs-client/sockjs.min.js"></script>
-        <script type="text/javascript" src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script th:src="@{/websocket/app.js}"></script>
 
         <!-- 네이버 맵 api -->
@@ -48,7 +50,7 @@
 
         <!-- Sidebar -->
         <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading"><a th:href="@{/}">AppMeeting Matching </a></div>
+            <div class="sidebar-heading"><a th:href="@{/}" style="text-decoration: none">AppMeeting Matching </a></div>
             <div class="list-group list-group-flush">
                 <div>
                     <a sec:authorize="isAnonymous()" class="list-group-item list-group-item-action bg-light loginBtn"
@@ -115,21 +117,21 @@
                         <li class="nav-item active">
                             <a class="nav-link" th:href="@{/}">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                My Page
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </li>
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" href="#">Link</a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item dropdown">-->
+<!--                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"-->
+<!--                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                                My Page-->
+<!--                            </a>-->
+<!--                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">-->
+<!--                                <a class="dropdown-item" href="#">Action</a>-->
+<!--                                <a class="dropdown-item" href="#">Another action</a>-->
+<!--                                <div class="dropdown-divider"></div>-->
+<!--                                <a class="dropdown-item" href="#">Something else here</a>-->
+<!--                            </div>-->
+<!--                        </li>-->
                     </ul>
                 </div>
             </nav>
@@ -317,7 +319,7 @@
                 str += '<table cellpadding="0" cellspacing="0">';
                 str += '<tr>';
                 str += '<td class="chat_td" data-email=' +list[i] +'>';
-                str += '<div class="email">'+ list[i]+'</div>';
+                str += '<div class="email" style="cursor: pointer">'+ list[i]+'</div>';
                 str += '</td>';
                 str += '</tr>';
                 str += '</table>';

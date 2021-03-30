@@ -59,7 +59,7 @@
                         <div class="row" style="height:90px">
                             <div class="form-group col-xs-10">
                                 <textarea style="height:80px;" id="message" class="form-control"
-                                          placeholder="메세지를 입력하세요." maxlength="100"></textarea>
+                                          placeholder="메세지를 입력하세요." maxlength="100" ></textarea>
                             </div>
                             <div class="form-group col-xs-2">
                                 <button id="sendBtn" type="button" class="btn btn-default pull-right" onclick="sendServer()">전송</button>
@@ -118,6 +118,9 @@
             switch (jsonData.msg_type)
             {
                 case 'ROOM_CHAT':
+
+                    console.log("받은 메세지 json :ㅣ "+jsonData);
+
                     room_chat(jsonData);
                     break;
                 case 'USER_OUT': //req_member 상관없이 처리한다. 어차피 해당 패킷은 남아있는 유저만 받을것이기 때문
@@ -147,10 +150,12 @@
     function room_chat(jsonData){
         var req_member = jsonData.data.req_member.toString();
         var msg = jsonData.data.message.toString();
+
+
         space = document.getElementById("space");
         space.innerHTML = space.innerHTML + "<div class='row'> <div class='col-lg-12'> <div class='media'> <div class='media-body'> <h4 class='media-heading'>" +
-            "<h4 class='small pull-right'></h4> </h4> </div> <p>|" + req_member + "|</p> <p>" +
-            msg + "</p> </div> </div> </div> <hr>";
+            "<h4 class='small pull-right'></h4> </h4> </div> <p>|" + req_member + "|</p> <p style=\"white-space: pre-line;\">" +
+                msg + "</p></div> </div> </div> <hr>";
         space.scrollTop = space.scrollHeight;
     }
 
@@ -161,6 +166,8 @@
         message.data = {req_member : chatManager.myEmail, message : input};
 
         send(roomSendAdd, message);
+
+        $('#message').val('');
     }
 
     function send(destination, data) {
@@ -186,7 +193,36 @@
         console.log("&&===========================&& "+ log + "&&===========================&& ");
     }
 
+    $(function() {
+        $('#message').on('keydown', function(event) {
+            if (event.keyCode == 13) {
+                if (!event.shiftKey) {
+                    event.preventDefault();
+
+                    sendServer();
+                    $('#message').empty()
+                }
+                else {
+
+
+                }
+            }
+
+        });
+
+    });
+    // function mykeydown() {
+    //     if(window.event.keyCode==13)
+    //     {
+    //         sendServer();
+    //
+    //
+    //     }
+    // }
+
     $(document).ready(function () {
+
+
 
         var session = [[${session['user']}]];
 
@@ -201,9 +237,13 @@
 
         connect();
 
+
+
     })
 
 </script>
+
+
 
 </body>
 

@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/vendor/**","/modal/**","/member/**","/login/**",
                         "/review/**","/img/**","/attend/getAttend","/websocket/**",
                         "/ws_sock/**","/chat/**","/html/**","/webjars/**").permitAll()
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/member/login")
@@ -45,7 +45,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/member/login")
                 .and()
-                .oauth2Login().userInfoEndpoint().userService(customOAuth2UserService);
+                .oauth2Login().defaultSuccessUrl("/")
+                .userInfoEndpoint().userService(customOAuth2UserService)
+                .and();
+
+        http.sessionManagement()
+                .maximumSessions(1)
+                .expiredUrl("/member/login")
+                .maxSessionsPreventsLogin(false);
+
     }
 
     public void configure(AuthenticationManagerBuilder auth) throws Exception { // 9

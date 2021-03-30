@@ -32,7 +32,7 @@ public class HomeController {
     }
 
     @GetMapping("/test")
-    public String test(String a, String b){
+    public String test(){
 
 
         return "index";

@@ -64,4 +64,9 @@ public class MemberController {
         return memberDTO;
     }
 
+    public String testRedirect(){
+
+        return "/member/test.html";
+    }
+
 }
