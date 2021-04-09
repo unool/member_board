@@ -3,12 +3,13 @@ package org.zerock.member_board.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Review;
 import org.zerock.member_board.entity.ReviewImage;
 
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-
+@Transactional
 @SpringBootTest
 public class ReviewImageRepositoryTests {
 

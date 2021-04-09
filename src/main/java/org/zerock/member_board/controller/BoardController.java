@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-@RequestMapping("/board/")
+@RequestMapping("/board")
 @Controller
 public class BoardController {
 
@@ -41,18 +41,20 @@ public class BoardController {
     private  AttendService attendService;
 
     @GetMapping("/list")
-    public void list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model) throws InterruptedException {
+    public String list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model) throws InterruptedException {
 
         model.addAttribute("result", boardService.getList(pageRequestDTO));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("=================== 콘트롤러");
         System.out.println(" : "+authentication);
 
+        return "/board/list";
     }
 
     @GetMapping("/register")
-    public void register(){
+    public String register(){
 
+        return "/board/register";
     }
 
 
@@ -67,13 +69,26 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping({"/read","/modify"})
-    public void read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
+    @GetMapping("/read")
+    public String read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
                      Long bno, Model model)
     {
         System.out.println(pageRequestDTO);
         BoardDTO boardDTO = boardService.get(bno);
         model.addAttribute("dto", boardDTO);
+
+        return "/board/read";
+    }
+
+    @GetMapping("/modify")
+    public String modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
+                     Long bno, Model model)
+    {
+        System.out.println(pageRequestDTO);
+        BoardDTO boardDTO = boardService.get(bno);
+        model.addAttribute("dto", boardDTO);
+
+        return "/board/modify";
     }
 
 
@@ -91,7 +106,7 @@ public class BoardController {
 
     }
 
-    @PostMapping("modify")
+    @PostMapping("/modify")
     public String modify(BoardDTO dto, @ModelAttribute("requestDTO")
             PageRequestDTO pageRequestDTO, RedirectAttributes redirectAttributes)
     {
@@ -125,8 +140,5 @@ public class BoardController {
         return "redirect:/board/read";
     }
 
-    @GetMapping("/test")
-    public void test(){
-        System.out.println("test");
-    }
+
 }

@@ -126,9 +126,7 @@ public class WebSocketService {
         return null;
     }
 
-    public void subAppWSSession(String simpSessionId)
-    {
-       WSSession wsSession = connectedList.get(simpSessionId);
+    public void subAppWSSession() {
 
        HashMap<String, Object> data = new HashMap<>();
 
@@ -145,7 +143,7 @@ public class WebSocketService {
                .msg_type(MSG_Type.SUB_RES)
                .data(data)
                .build();
-
+//        Thread.sleep(2000);
        broadcast(chatMessage);
     }
 
@@ -162,7 +160,9 @@ public class WebSocketService {
             case JOIN_REQ:
                 chatMessage = join_req(sessionID, message);
                 break;
-
+            case SUB_REQ:
+                subAppWSSession();
+                break;
 
         }
 

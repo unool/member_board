@@ -45,22 +45,36 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/reviewList")
-    public void list(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Model model){
+    public String list(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Model model){
 
         model.addAttribute("result",   reviewService.getList(pageRequestDTO));
+
+        return "/review/reviewList";
     }
 
-    @GetMapping({"/reviewRead", "/reviewModify"})
-    public void read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long rro, Model model)
+    @GetMapping("/reviewRead")
+    public String read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long rro, Model model)
     {
         model.addAttribute("dto",reviewService.get(rro));
+
+        return "/review/reviewRead";
+    }
+
+    @GetMapping("/reviewModify")
+    public String modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long rro, Model model)
+    {
+        model.addAttribute("dto",reviewService.get(rro));
+
+        return "/review/reviewModify";
     }
 
     @GetMapping("/reviewRegister")
-    public void register(String email, Model model)
+    public String register(String email, Model model)
     {
 
         model.addAttribute("dtoList", reviewService.getList(email)); //작성 가능한 보드를 가져오기위해
+
+        return "/review/reviewRegister";
     }
 
 

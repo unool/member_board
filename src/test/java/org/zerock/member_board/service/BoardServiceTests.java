@@ -4,11 +4,13 @@ package org.zerock.member_board.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 
+@Transactional
 @SpringBootTest
 public class BoardServiceTests {
 
@@ -56,5 +58,6 @@ public class BoardServiceTests {
 
         boardService.modify(boardDTO);
     }
+
 
 }

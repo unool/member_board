@@ -19,10 +19,8 @@ import org.zerock.member_board.service.MemberServiceImpl;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-
     private final MemberServiceImpl memberService;
     private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
 
 
     @Override

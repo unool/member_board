@@ -27,7 +27,7 @@ out/
 !**/src/test/**/out/
 
 application-oauth.properties
-
+application-aws.properties
 
 ### NetBeans ###
 /nbproject/private/

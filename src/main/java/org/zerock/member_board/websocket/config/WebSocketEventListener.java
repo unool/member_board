@@ -69,18 +69,16 @@ public class WebSocketEventListener {
     }
 
     @EventListener
-    public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
+    public void handleWebSocketSubscribeListener(SessionSubscribeEvent event)  {
         LogManager.log("구독 완료");
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
 
         String subAdd = headerAccessor.getHeader("simpDestination").toString();
 
-        if(!subAdd.contains(AddressUtil.getRoomSendAdd())) //룸 채팅이 아닐 경우
-        {
-            webSocketService.subAppWSSession(sessionId);
-        }
     }
+
+
 
 
 }

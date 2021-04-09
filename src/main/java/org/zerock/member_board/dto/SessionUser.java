@@ -8,7 +8,7 @@ import org.zerock.member_board.entity.User;
 import java.io.Serializable;
 
 @Getter
-public class SessionUser implements Serializable {
+public class SessionUser  {
     private String name, email, picture;
     public SessionUser(User user) {
         this.name = user.getName();

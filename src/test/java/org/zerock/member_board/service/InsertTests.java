@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.*;
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.entity.role.Kind;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+@Transactional
 @SpringBootTest
 public class InsertTests {
 

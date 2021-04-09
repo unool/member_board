@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.dto.AttendDTO;
 import org.zerock.member_board.dto.BoardDTO;
+import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.repository.AttendRepository;
+import org.zerock.member_board.repository.BoardRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,7 @@ import java.util.Optional;
 public class AttendService {
 
     private final AttendRepository attendRepository;
-
+    private final BoardRepository boardRepository;
 
     public AttendDTO getAttend(Long bno){
 
@@ -68,14 +70,33 @@ public class AttendService {
             return null;
 
         }
+
+        //이미 확정 된 모임인지 체크
+        Object boardObj
+                = boardRepository.getBoardByBno(bno);
+
+        if(boardObj == null)
+        {
+            return null;
+        }
+
+        Object[] boardObjs = (Object[]) boardObj;
+        Board board  = (Board)boardObjs[0];
+
         Attend attend = result.get();
 
+        if(board.getEnd()) //이미 종료 됬다면
+        {
+            AttendDTO attendDTO = entityToDTO(attend);
+            return attendDTO;
+        }
 
 
 
         List<String> curMemberList = attend.getMembers();
 
         Long curCnt = Long.valueOf(attend.getCurrentCnt());
+
         if(attend.getMembers().contains(attendEmail))
         {
             curMemberList.remove(attendEmail);

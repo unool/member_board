@@ -11,7 +11,7 @@ import org.zerock.member_board.entity.role.Role;
 
 import java.util.stream.IntStream;
 
-
+@Transactional
 @SpringBootTest
 public class MemberRepositoryTests {
 

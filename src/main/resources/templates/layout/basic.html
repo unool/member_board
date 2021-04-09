@@ -175,6 +175,7 @@
             this.roomAdd = 'aaa';
             this.myEmail = session == null ? '' : session.email;
             this.rooomID = '';
+            this.subID = '';
         }
 
 
@@ -283,12 +284,10 @@
 
 
 
-            // setChildValues();
+
         }
 
-        function setChildValues(){
-            childWindow.document.getElementById("room_id").value = chatManager.rooomID;
-        }
+
 
 
         function chat_res(joinResult , jsonData){
@@ -345,21 +344,38 @@
 
 
 
+
         function connect() {
             var socket = new SockJS('/ws_connect');
             chatManager.appClient = Stomp.over(socket);
             chatManager.appClient.connect({userEmail: chatManager.myEmail}, function (frame) {
 
-                chatManager.appClient.subscribe(appSubAdd, function (msg) {
+                chatManager.subID = chatManager.appClient.subscribe(appSubAdd, function (msg) {
                     appReceiveCallback(msg);
                 });
+
+
+                if(chatManager.subID != null)
+                {
+                    console.log("receive subID : " + chatManager.subID);
+                    var message = new Object();
+                    message.msg_type = 'SUB_REQ';
+                    message.data = {sub_member : chatManager.myEmail};
+
+                    send(appSendAdd,message);
+                }
+                else
+                {
+                    console.log("subID null");
+                }
+
+
+
             });
         }
 
         $('.list').on('click', 'li td',function(e) //로그인 리스트에서 눌렸을때
         {
-
-
             var email=$(this).attr("data-email");
 
             var myEmail = getMyEmail();
@@ -367,8 +383,6 @@
             {
                 return;
             }
-
-
             reqChat(email);
         })
 

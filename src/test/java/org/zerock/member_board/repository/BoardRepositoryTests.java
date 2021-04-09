@@ -14,7 +14,7 @@ import org.zerock.member_board.entity.Member;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
+@Transactional
 @SpringBootTest
 public class BoardRepositoryTests {
 

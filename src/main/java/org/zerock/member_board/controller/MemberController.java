@@ -20,25 +20,23 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/login")
-    public void login(String useremail, String userpass, Model model){
-
-        System.out.println("loginGet");
-        System.out.println("========================= "+useremail);
-        System.out.println("========================= "+userpass);
+    public String login(String useremail, String userpass, Model model){
 
         model.addAttribute("useremail",useremail);
         model.addAttribute("userepass",userpass);
 
+        return "/member/login";
     }
     @PostMapping ("/login")
-    public void loginPost(){
+    public String loginPost(){
 
-        System.out.println("loginPost");
+       return "/member/login";
     }
 
     @GetMapping("/signup")
-    public void signup(){
+    public String signup(){
 
+        return "/member/signup";
     }
     @PostMapping("/register")
     public String register(MemberDTO dto){
@@ -64,9 +62,6 @@ public class MemberController {
         return memberDTO;
     }
 
-    public String testRedirect(){
 
-        return "/member/test.html";
-    }
 
 }

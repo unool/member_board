@@ -10,7 +10,7 @@ import org.zerock.member_board.entity.Reply;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
+@Transactional
 @SpringBootTest
 public class ReplyRepositoryTests {
 

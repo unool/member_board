@@ -28,15 +28,18 @@ public class HomeController {
 
         model.addAttribute("reviewDTOList",
                 reviewService.getRecentReview());
-        return "index";
+        return "/index";
     }
 
     @GetMapping("/test")
     public String test(){
 
+        System.out.println("테스트");
 
-        return "index";
+        return "/test";
     }
+
+
 
 
 }

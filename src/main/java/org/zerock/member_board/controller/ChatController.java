@@ -21,7 +21,7 @@ public class ChatController {
 
 
     @GetMapping("/chatroom")
-    public void chatroom(ChatRoomDTO chatRoomDTO, Model model){ //새창을 띄울때로 바로 Param을 보내는게 안됨.
+    public String chatroom(ChatRoomDTO chatRoomDTO, Model model){ //새창을 띄울때로 바로 Param을 보내는게 안됨.
 
         String myEmail = MemberHandler.GetMemberEmail();
 
@@ -29,5 +29,7 @@ public class ChatController {
         chatRoomDTO.setMyEmail(myEmail);
 
         model.addAttribute("dto", chatRoomDTO);
+
+        return "/chat/chatroom";
     }
 }
