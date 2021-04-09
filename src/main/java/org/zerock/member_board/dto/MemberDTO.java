@@ -1,5 +1,4 @@
 package org.zerock.member_board.dto;
-
 import lombok.*;
 
 @Getter

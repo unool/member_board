@@ -1,7 +1,4 @@
 package org.zerock.member_board.websocket.service;
-
-
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +11,8 @@ import org.zerock.member_board.websocket.dto.MSG_Type;
 import org.zerock.member_board.websocket.entity.WSSession;
 import org.zerock.member_board.websocket.repository.ChatRoomRepository;
 import org.zerock.member_board.websocket.util.AddressUtil;
-
 import java.util.*;
+
 
 @Service
 public class WebSocketService {

@@ -1,6 +1,4 @@
 package org.zerock.member_board.dto;
-
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,5 +11,4 @@ public class ParticipationDTO {
     private Long bno;
 
     private String Title;
-
 }

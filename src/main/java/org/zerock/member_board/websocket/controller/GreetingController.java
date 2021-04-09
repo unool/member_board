@@ -1,29 +1,20 @@
 package org.zerock.member_board.websocket.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.*;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
-
 import org.zerock.member_board.websocket.dto.ChatMessage;
-import org.zerock.member_board.websocket.dto.MSG_Type;
 import org.zerock.member_board.websocket.service.WebSocketService;
 
-import java.util.Map;
-
+@RequiredArgsConstructor
 @Controller
 public class GreetingController {
 
-    @Autowired
-    WebSocketService webSocketService;
-
+    private final WebSocketService webSocketService;
 
     @MessageMapping("/broad")
     @SendTo("/cli/broad")
     public ChatMessage greeting(ChatMessage message, @Header("simpSessionId") String sessionId) throws Exception {
-
 
         return webSocketService.receiveChatMessage(sessionId,message);
     }

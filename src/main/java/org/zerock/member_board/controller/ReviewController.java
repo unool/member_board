@@ -1,35 +1,15 @@
 package org.zerock.member_board.controller;
-
-
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.zerock.member_board.dto.LikeDTO;
-import org.zerock.member_board.dto.PageRequestDTO;
-import org.zerock.member_board.dto.ParticipationDTO;
-import org.zerock.member_board.dto.ReviewDTO;
+import org.zerock.member_board.dto.*;
 import org.zerock.member_board.service.ReviewService;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 
 
 @RequestMapping("/review")
@@ -37,18 +17,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReviewController {
 
-    Logger loggger = LoggerFactory.getLogger(ReviewController.class);
-
-
-
-    @Autowired
     private final ReviewService reviewService;
 
     @GetMapping("/reviewList")
-    public String list(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Model model){
+    public String list(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Model model, String reason){
 
         model.addAttribute("result",   reviewService.getList(pageRequestDTO));
-
+        model.addAttribute("reason", reason);
         return "/review/reviewList";
     }
 
@@ -56,7 +31,6 @@ public class ReviewController {
     public String read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long rro, Model model)
     {
         model.addAttribute("dto",reviewService.get(rro));
-
         return "/review/reviewRead";
     }
 
@@ -64,27 +38,31 @@ public class ReviewController {
     public String modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long rro, Model model)
     {
         model.addAttribute("dto",reviewService.get(rro));
-
         return "/review/reviewModify";
     }
 
     @GetMapping("/reviewRegister")
-    public String register(String email, Model model)
+    public String register(String email, Model model, RedirectAttributes redirectAttributes)
     {
+        List<ParticipationDTO> result = reviewService.getList(email);
 
-        model.addAttribute("dtoList", reviewService.getList(email)); //작성 가능한 보드를 가져오기위해
-
-        return "/review/reviewRegister";
+        if(result == null)
+        {
+            redirectAttributes.addAttribute("reason","redirect");
+            return "redirect:/review/reviewList";
+        }
+        else
+        {
+            model.addAttribute("dtoList", result); //작성 가능한 보드를 가져오기위해
+            return "/review/reviewRegister";
+        }
     }
-
 
     @PostMapping("/reviewRegister")
     public String register(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
                            ReviewDTO reviewDTO, MultipartFile[] photos)
     {
-
         reviewService.register(reviewDTO, photos);
-
         return "redirect:/review/reviewList";
     }
 
@@ -92,10 +70,7 @@ public class ReviewController {
     public String modify(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO,
                          ReviewDTO reviewDTO, MultipartFile[] photos , RedirectAttributes redirectAttributes)
     {
-
         reviewService.modify(reviewDTO, photos);
-
-
         return "redirect:/review/reviewList"; //바꿀것
     }
 
@@ -111,7 +86,6 @@ public class ReviewController {
     public ResponseEntity<byte[]> getPhoto(String fileName){
 
         return reviewService.getPhotoFile(fileName);
-
     }
 
     @ResponseBody
@@ -126,7 +100,6 @@ public class ReviewController {
     public ResponseEntity<String> clickLike(Long rro){
 
         reviewService.clickLikeReview(rro);
-
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 

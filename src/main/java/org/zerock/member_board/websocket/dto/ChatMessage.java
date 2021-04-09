@@ -1,8 +1,5 @@
 package org.zerock.member_board.websocket.dto;
-
-
 import lombok.*;
-
 import java.util.HashMap;
 
 

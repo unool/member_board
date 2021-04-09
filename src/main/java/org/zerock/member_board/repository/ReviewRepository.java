@@ -1,17 +1,13 @@
 package org.zerock.member_board.repository;
-
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Review;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("select r, ri, m, b from Review r left outer join ReviewImage ri on ri.review = r left outer join " +

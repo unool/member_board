@@ -1,9 +1,6 @@
 package org.zerock.member_board.dto;
-
 import lombok.*;
-
 import java.util.List;
-
 
 @Getter
 @Setter

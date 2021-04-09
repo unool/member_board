@@ -1,11 +1,7 @@
 package org.zerock.member_board.controller;
-
-import org.apache.tomcat.jni.Local;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,41 +9,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.zerock.member_board.dto.AttendDTO;
-import org.zerock.member_board.dto.BoardDTO;
-import org.zerock.member_board.dto.OAuthAttributes;
-import org.zerock.member_board.dto.PageRequestDTO;
-import org.zerock.member_board.entity.Member;
-import org.zerock.member_board.repository.AttendRepository;
-import org.zerock.member_board.service.AttendService;
+import org.zerock.member_board.dto.*;
 import org.zerock.member_board.service.BoardService;
-
-import javax.servlet.http.HttpSession;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
+
+@RequiredArgsConstructor
 @RequestMapping("/board")
 @Controller
 public class BoardController {
 
-    @Autowired
-    private BoardService boardService;
-
-    @Autowired
-    private  AttendService attendService;
+    private final BoardService boardService;
 
     @GetMapping("/list")
     public String list(@Param("requestDTO")PageRequestDTO pageRequestDTO, Model model) throws InterruptedException {
 
         model.addAttribute("result", boardService.getList(pageRequestDTO));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("=================== 콘트롤러");
-        System.out.println(" : "+authentication);
-
         return "/board/list";
     }
 
@@ -57,15 +34,11 @@ public class BoardController {
         return "/board/register";
     }
 
-
     @PostMapping("/register")
     public String registerPost(BoardDTO dto, RedirectAttributes redirectAttributes) throws ParseException {
 
-
         Long bno = boardService.register(dto);
-
         redirectAttributes.addAttribute("bno", bno);
-
         return "redirect:/board/list";
     }
 
@@ -76,7 +49,6 @@ public class BoardController {
         System.out.println(pageRequestDTO);
         BoardDTO boardDTO = boardService.get(bno);
         model.addAttribute("dto", boardDTO);
-
         return "/board/read";
     }
 
@@ -87,7 +59,6 @@ public class BoardController {
         System.out.println(pageRequestDTO);
         BoardDTO boardDTO = boardService.get(bno);
         model.addAttribute("dto", boardDTO);
-
         return "/board/modify";
     }
 
@@ -96,14 +67,9 @@ public class BoardController {
     @PostMapping("/remove")
     public String remove(long bno, RedirectAttributes redirectAttributes)
     {
-
         boardService.removeWithReplyies(bno);
-
-
         redirectAttributes.addFlashAttribute("msg", bno);
-
         return "redirect:/board/list";
-
     }
 
     @PostMapping("/modify")
@@ -132,13 +98,11 @@ public class BoardController {
                           RedirectAttributes redirectAttributes)
     {
         boardService.confirm(bno);
-
         redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
         redirectAttributes.addAttribute("type", pageRequestDTO.getType());
         redirectAttributes.addAttribute("keyword", pageRequestDTO.getTypeKeyword());
         redirectAttributes.addAttribute("bno", bno);
         return "redirect:/board/read";
     }
-
 
 }

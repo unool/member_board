@@ -1,12 +1,9 @@
 package org.zerock.member_board.websocket.dto;
-
 import lombok.Getter;
 import org.zerock.member_board.service.util.LogManager;
 import org.zerock.member_board.websocket.entity.WSSession;
 import org.zerock.member_board.websocket.service.WebSocketService;
 import org.zerock.member_board.websocket.util.AddressUtil;
-
-
 import java.util.*;
 
 
@@ -34,13 +31,11 @@ public class ChatRoom {
 
         if(members.size()  < 2)
         {
-//            waitRoom();
+            waitRoom(); //방 타이머 시작, 시간 초과시 방 폐기
         }
         else{
-            System.out.println("타이머 중지");
             timer.cancel();
         }
-
     }
 
     public void waitRoom(){
@@ -72,6 +67,7 @@ public class ChatRoom {
         LogManager.log("desti : " + destination+ " , " + chatMessage);
         webSocketService.roomSend(destination, chatMessage);
     }
+
     private String getDestination(String chatRoomId) {
         return AddressUtil.getRoomSendAdd() + chatRoomId;
     }

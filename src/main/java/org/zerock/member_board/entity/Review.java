@@ -1,9 +1,5 @@
 package org.zerock.member_board.entity;
-
-
 import lombok.*;
-import org.springframework.data.repository.NoRepositoryBean;
-
 import javax.persistence.*;
 
 @ToString(exclude = {"writer", "board"})

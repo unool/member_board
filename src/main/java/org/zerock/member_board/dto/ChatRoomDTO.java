@@ -1,7 +1,4 @@
 package org.zerock.member_board.dto;
-
-
-
 import lombok.*;
 
 
@@ -14,8 +11,12 @@ import lombok.*;
 public class ChatRoomDTO {
 
     private String appSubAdd;
+
     private String appSendAdd;
+
     private String roomID;
+
     private String myEmail;
+
 
 }

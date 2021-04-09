@@ -1,5 +1,4 @@
 package org.zerock.member_board.entity.role;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

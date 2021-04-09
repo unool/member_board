@@ -1,8 +1,5 @@
 package org.zerock.member_board.entity;
-
-
 import lombok.*;
-
 import javax.persistence.*;
 
 @NoArgsConstructor

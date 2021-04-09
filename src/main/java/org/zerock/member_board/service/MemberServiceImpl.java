@@ -1,8 +1,5 @@
 package org.zerock.member_board.service;
-
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,20 +7,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.member_board.dto.MemberDTO;
 import org.zerock.member_board.dto.SessionUser;
-import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.repository.MemberRepository;
-
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @Service
 public class MemberServiceImpl implements UserDetailsService,MemberService {
-    private final HttpSession httpSession;
-    Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
-    private final MemberRepository memberRepository;
 
+    private final HttpSession httpSession;
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -55,9 +50,7 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
             return null;
         }
 
-
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
         Member member = Member.builder()
                 .email(dto.getEmail())
                 .name(dto.getName())
@@ -66,10 +59,6 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
                 .auth(dto.getAuth())
                 .kind(dto.getKind())
                 .build();
-
-
-
-
 
         return memberRepository.save(member).getEmail();
     }

@@ -1,9 +1,6 @@
 package org.zerock.member_board.repository;
-
-
 import org.springframework.stereotype.Repository;
 import org.zerock.member_board.entity.User;
-
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Stream;

@@ -1,51 +1,34 @@
 package org.zerock.member_board.controller;
-
-import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Map;
 import java.net.URL;
 
-
-
-
-
-//oauth2를 안 쓰고 구현한 네이버 로그인
-//현재는 쓰이지 않음
-
-
-
-
-
+/**
+ * oauth2를 안 쓰고 구현한 네이버 로그인
+ * 현재는 쓰이지 않음
+ */
 
 
 @Controller
@@ -72,9 +55,7 @@ public class NaverLoginController {
 
         System.out.println("===="+session.getId()+"====");
         String redirectURI = URLEncoder.encode("http://localhost:8080/naver/callback", "UTF-8");
-
         String state = generateState();
-
         String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
         apiURL += String.format("&client_id=%s&redirect_uri=%s&state=%s",
                 CLIENT_ID, redirectURI, state);
@@ -86,28 +67,18 @@ public class NaverLoginController {
     @GetMapping("/naver/callback")
     public String naverCallback(HttpSession session, HttpServletRequest request, Model model, RedirectAttributes redi) throws IOException, ParseException, org.apache.tomcat.util.json.ParseException {
 
-        System.out.println("=============================콜백==================================");
-
         String code = request.getParameter("code");
         String state = request.getParameter("state");
-        String redirectURI = URLEncoder.encode("http://localhost:8080/naver/callback1", "UTF-8");
-
         Object storedStateObj = session.getAttribute("state");
-
         if(state == null || storedStateObj == null)
         {
             //예외처리
-
         }
-
         String storedState = storedStateObj.toString();
-
         if(state != storedState)
         {
             //예외처리
         }
-
-
         String apiURL;
         apiURL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&";
         apiURL += "client_id=" + CLIENT_ID;
@@ -117,15 +88,12 @@ public class NaverLoginController {
         System.out.println("apiURL=" + apiURL);
         String res = requestToServer(apiURL);
 
-
         //삭제
         String email = "";
         redi.addAttribute("useremail","tester@yahoo.co.kr");
         redi.addAttribute("userpass","1234");
 
-
         if(res != null && !res.equals("")) {
-//            model.addAttribute("res", res);
             Map<String, Object> parsedJson = new JSONParser(res).parseObject();
             System.out.println(parsedJson);
             session.setAttribute("currentUser", res);
@@ -135,10 +103,8 @@ public class NaverLoginController {
             //삭제
             getProfileFromNaver(parsedJson.get("access_token").toString());
 
-
-
         } else {
-//            model.addAttribute("res", "Login failed!");
+
         }
         System.out.println("=============================콜백==================================");
 

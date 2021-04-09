@@ -1,9 +1,7 @@
 package org.zerock.member_board.service;
-
 import org.zerock.member_board.dto.ReplyDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Reply;
-
 import java.util.List;
 
 public interface ReplyService {
@@ -42,7 +40,4 @@ public interface ReplyService {
                 .build();
         return dto;
     }
-
-
-
 }

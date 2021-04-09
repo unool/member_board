@@ -1,22 +1,20 @@
 package org.zerock.member_board.service;
-
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.redis.Attend;
-
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 
 public interface BoardService {
 
     Long register(BoardDTO dto);
 
-    PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO);
+    PageResultDTO<BoardDTO> getList(PageRequestDTO pageRequestDTO);
 
     BoardDTO get(Long bno);
 
@@ -71,5 +69,5 @@ public interface BoardService {
 
     void confirm(Long bno);
 
-    public List<BoardDTO> getRecentBoard();
+    List<BoardDTO> getRecentBoard();
 }

@@ -1,5 +1,4 @@
 package org.zerock.member_board.service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -9,11 +8,11 @@ import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Reply;
 import org.zerock.member_board.repository.ReplyRepository;
 import org.zerock.member_board.service.util.MemberHandler;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 @Transactional
 @Service
@@ -54,8 +53,6 @@ public class ReplyServiceImpl implements ReplyService{
 
         Optional<Reply> result = replyRepository.findById(replyDTO.getRno());
 
-
-
         if(result.isPresent())
         {
             Reply reply = result.get();
@@ -71,7 +68,6 @@ public class ReplyServiceImpl implements ReplyService{
         {
             return false;
         }
-
         return true;
     }
 
@@ -95,7 +91,6 @@ public class ReplyServiceImpl implements ReplyService{
             {
                 return false;
             }
-
             replyRepository.delete(reply);
         }
         else
@@ -105,9 +100,5 @@ public class ReplyServiceImpl implements ReplyService{
 
         return true;
     }
-
-
-
-
 }
 

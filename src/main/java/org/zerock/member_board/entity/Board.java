@@ -1,11 +1,7 @@
 package org.zerock.member_board.entity;
-
-
 import lombok.*;
 import org.zerock.member_board.dto.BoardDTO;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

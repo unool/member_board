@@ -1,9 +1,7 @@
 package org.zerock.member_board.websocket.dto;
 
 public enum MSG_Type{
-//    CONNECT,
-//    CLOSE,
-//    SUB_REQ,
+
     SUB_RES,  //서버->클라, 구독에 대한 결과 브로드캐스트
     CHAT_REQ, //클라->서버, 채팅 요청
     CHAT_RES, //서버->클라, 채팅 요청에 대한 것을 모든 유저에게 브로드캐스트

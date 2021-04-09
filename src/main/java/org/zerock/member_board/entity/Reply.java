@@ -1,7 +1,5 @@
 package org.zerock.member_board.entity;
-
 import lombok.*;
-
 import javax.persistence.*;
 
 @Getter
@@ -20,7 +18,6 @@ public class Reply extends BaseEntity{
 
     private String replyer;
 
-//(fetch = FetchType.LAZY)
     @ManyToOne (fetch = FetchType.LAZY)
     private Board board;
 

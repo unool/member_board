@@ -1,10 +1,6 @@
 package org.zerock.member_board.dto;
-
 import lombok.*;
-import org.zerock.member_board.entity.Board;
-import org.zerock.member_board.entity.ReviewImage;
 import org.zerock.member_board.entity.redis.Like;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +32,5 @@ public class ReviewDTO {
 
     @Builder.Default
     private List<ReviewImageDTO> imageList = new ArrayList<>();
-
-
-
 
 }

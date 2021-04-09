@@ -1,14 +1,10 @@
 package org.zerock.member_board.websocket.repository;
-
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.zerock.member_board.websocket.dto.ChatRoom;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 
 @Component
 @Getter
@@ -30,6 +26,5 @@ public class ChatRoomRepository {
     {
         roomList.put(id, room);
     }
-
 
 }

@@ -47,4 +47,5 @@ public class BoardDTO {
     private int replyCount;
 
     private Boolean end;
+
 }

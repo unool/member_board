@@ -1,5 +1,4 @@
 package org.zerock.member_board.entity.role;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +10,6 @@ public enum Kind {
     NORMAL("KIND_NORMAL", "일반유저");
     private final String key;
     private final String title;
-
 }
 
 

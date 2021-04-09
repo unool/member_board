@@ -1,12 +1,13 @@
 package org.zerock.member_board.entity;
-
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.zerock.member_board.entity.role.Role;
-
 import javax.persistence.*;
+
+/**
+ * 현재는 쓰이지 않는 클래스 (Member로 대체)
+ */
 
 
 @Getter

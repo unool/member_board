@@ -1,13 +1,9 @@
 package org.zerock.member_board.dto;
-
-
 import lombok.Builder;
 import lombok.Getter;
 import org.zerock.member_board.entity.Member;
-import org.zerock.member_board.entity.User;
 import org.zerock.member_board.entity.role.Kind;
 import org.zerock.member_board.entity.role.Role;
-
 import java.util.Map;
 
 

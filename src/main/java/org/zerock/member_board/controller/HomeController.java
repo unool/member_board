@@ -1,28 +1,20 @@
 package org.zerock.member_board.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.zerock.member_board.service.BoardService;
 import org.zerock.member_board.service.ReviewService;
 
-import javax.servlet.http.HttpSession;
-
-
+@RequiredArgsConstructor
 @Controller
 public class HomeController {
 
-    @Autowired
-    BoardService boardService;
-
-    @Autowired
-    ReviewService reviewService;
-
-    int rctBoardCnt = 3;
+    private final BoardService boardService;
+    private final ReviewService reviewService;
 
     @GetMapping("/")
-    public String index(Model model, HttpSession httpSession){
+    public String index(Model model){
         model.addAttribute("boardDTOList",
                 boardService.getRecentBoard());
 
@@ -30,16 +22,4 @@ public class HomeController {
                 reviewService.getRecentReview());
         return "/index";
     }
-
-    @GetMapping("/test")
-    public String test(){
-
-        System.out.println("테스트");
-
-        return "/test";
-    }
-
-
-
-
 }

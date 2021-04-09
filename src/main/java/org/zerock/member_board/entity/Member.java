@@ -1,14 +1,8 @@
 package org.zerock.member_board.entity;
-
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.zerock.member_board.entity.role.Role;
-
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;

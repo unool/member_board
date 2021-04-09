@@ -1,15 +1,12 @@
 package org.zerock.member_board.service;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.dto.AttendDTO;
-import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.repository.AttendRepository;
 import org.zerock.member_board.repository.BoardRepository;
-
 import java.util.List;
 import java.util.Optional;
 

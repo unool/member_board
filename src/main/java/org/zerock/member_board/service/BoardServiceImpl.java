@@ -1,38 +1,25 @@
 package org.zerock.member_board.service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.Participation;
-
 import org.zerock.member_board.entity.redis.Attend;
 import org.zerock.member_board.repository.AttendRepository;
 import org.zerock.member_board.repository.BoardRepository;
 import org.zerock.member_board.repository.ParticipationRepository;
 import org.zerock.member_board.repository.ReplyRepository;
-
 import org.zerock.member_board.repository.querydsl.SearchBoardRepositoryImpl;
 import org.zerock.member_board.service.util.MemberHandler;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,14 +42,10 @@ public class BoardServiceImpl implements BoardService{
     public Long register(BoardDTO dto) {
 
         Board board = dtoToEntity(dto);
-
         Board savedBoard = boardRepository.save(board);
-
         String email = MemberHandler.GetMemberEmail();
-
         List<String> members = new ArrayList<>();
         members.add(email);
-
         Attend attend = Attend.builder()
                 .id(savedBoard.getBno().toString())
                 .currentCnt(String.valueOf(1))
@@ -71,7 +54,6 @@ public class BoardServiceImpl implements BoardService{
                 .build();
 
         attendRepository.save(attend);
-
         return savedBoard.getBno();
     }
 
@@ -104,14 +86,7 @@ public class BoardServiceImpl implements BoardService{
 
 
     @Override
-    public PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
-
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("=================== 서비스");
-        System.out.println(" : "+authentication);
-
-
+    public PageResultDTO<BoardDTO> getList(PageRequestDTO pageRequestDTO) {
 
         Page<Object[]> result = searchBoardRepository.searchBoard(pageRequestDTO.getType(), pageRequestDTO.getTypeKeyword(),
                 pageRequestDTO.isRegion(), pageRequestDTO.getRegionKeyword(), pageRequestDTO.getMinCost(), pageRequestDTO.getMaxCost(),
@@ -122,11 +97,8 @@ public class BoardServiceImpl implements BoardService{
         for(Object[] objects : result)
         {
             Board board = (Board) objects[0];
-
             Optional<Attend> attend = attendRepository.findById(board.getBno().toString());
-
             BoardDTO boardDTO = entityToDTO((Board)objects[0],(Member) objects[1],(Long)objects[2], attend.get());
-
             boardDTOList.add(boardDTO);
         }
 
@@ -149,7 +121,6 @@ public class BoardServiceImpl implements BoardService{
     public void removeWithReplyies(Long bno) {
 
         replyRepository.deleteByBno(bno);
-
         boardRepository.deleteById(bno);
     }
 
@@ -170,20 +141,15 @@ public class BoardServiceImpl implements BoardService{
 
         if(board != null)
         {
-
             if(board.getEnd() == true) //이미 처리됨..
             {
                 return;
             }
 
             board.setEnd(true);
-
             Optional<Attend> result = attendRepository.findById(bno.toString());
-
             Attend attend = result.get();
-
             List<String> members = attend.getMembers();
-
             for(String email : members)
             {
                 Board tempBoard = Board.builder()
@@ -198,19 +164,14 @@ public class BoardServiceImpl implements BoardService{
                         .member(tempMember)
                         .build();
                 participationRepository.save(participation);
-
             }
-
-
         }
-
     }
 
     @Override
     public List<BoardDTO> getRecentBoard() {
 
         List<Board> list = boardRepository.findTop3ByOrderByBnoDesc(); //메소드 이름으로 쿼리 생성
-
         List<BoardDTO> dtoList = new ArrayList<>();
 
         for(Board board : list)

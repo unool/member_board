@@ -1,46 +1,33 @@
 package org.zerock.member_board.service;
-
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.controller.HomeController;
-import org.zerock.member_board.controller.MemberController;
 import org.zerock.member_board.dto.OAuthAttributes;
 import org.zerock.member_board.dto.SessionUser;
 import org.zerock.member_board.entity.Member;
-import org.zerock.member_board.entity.User;
 import org.zerock.member_board.repository.MemberRepository;
 import org.zerock.member_board.repository.UserRepository;
-
 import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-    private final UserRepository userRepository;
+
     private final HttpSession httpSession;
     private final MemberRepository memberRepository;
-
-    //삭제
-    private final HomeController homeController;
-
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -50,8 +37,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String registrationId = userRequest
                 .getClientRegistration()
                 .getRegistrationId();
-
-
 
 
         // oauth2 로그인 진행 시 키가 되는 필드값
@@ -66,8 +51,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member member = saveOrUpdate(attributes);
         // SessioUser: 세션에 사용자 정보를 저장하기 위한 DTO 클래스 (개발자가 생성)
 
-        System.out.println("CustomOAuth2UserService : >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+this.toString());
-        System.out.println("세션 아이디 : >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+httpSession.getId());
         httpSession.setAttribute("user", new SessionUser(member));
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getAuth())),
@@ -79,7 +62,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         List<Member> result = memberRepository.findById(attributes.getEmail()).stream()
                 .map(entity-> entity.update(attributes.getName(), attributes.getPicture(), attributes.getKind())).collect(Collectors.toList());
-
 
         Member member;
         if(result.isEmpty())
@@ -94,6 +76,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return memberRepository.save(member);
 
 
+//        User 객체 사용
 //        List<User> result = userRepository.findByEmail(attributes.getEmail())
 //                .map(entity -> entity.update(attributes.getName(), attributes.getPicture())).collect(Collectors.toList());
 //

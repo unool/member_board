@@ -33,7 +33,7 @@ public class BoardServiceTests {
     public void testList(){
         PageRequestDTO pageRequestDTO = new PageRequestDTO();
 
-        PageResultDTO<BoardDTO,Object[]> result = boardService.getList(pageRequestDTO);
+        PageResultDTO<BoardDTO> result = boardService.getList(pageRequestDTO);
 
         for(BoardDTO dto : result.getDtoList())
         {
