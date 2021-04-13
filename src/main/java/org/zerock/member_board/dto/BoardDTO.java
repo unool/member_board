@@ -1,10 +1,5 @@
 package org.zerock.member_board.dto;
-
-
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,23 +13,21 @@ public class BoardDTO {
 
     private Long bno;
 
-    private String title;
+    private String title; //필수
 
-    private String content;
+    private String content; //필수
 
-    private String writerEmail;
+    private String writerEmail; //필수
 
-    private String writerName;
+    private Long costs; //필수
 
-    private Long costs;
-
-    private String place;
+    private String place; //필수
 
     private Long curCnt;
 
     private Long reqCnt;
 
-    private String position;
+    private String position; //필수
 
     private List<String> members;
 
@@ -42,10 +35,10 @@ public class BoardDTO {
 
     private LocalDateTime modDate;
 
-    private String limitDate;
+    private String limitDate; //필수
 
     private int replyCount;
 
-    private Boolean end;
+    private Boolean end; //필수
 
 }

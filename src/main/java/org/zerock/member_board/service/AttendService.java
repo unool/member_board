@@ -29,12 +29,6 @@ public class AttendService {
             try {
                 Attend attend = result.get();
 
-                //삭제
-                for(String mem : attend.getMembers())
-                {
-                    System.out.println(mem);
-                }
-
                 attendDTO = entityToDTO(attend);
 
                 return attendDTO;

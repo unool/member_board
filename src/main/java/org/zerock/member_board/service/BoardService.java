@@ -51,7 +51,6 @@ public interface BoardService {
                 .regDate(board.getRegDate())
                 .modDate(board.getModDate())
                 .writerEmail(member.getEmail())
-                .writerName(member.getName())
                 .costs(board.getCosts())
                 .place(board.getPlace())
                 .curCnt(Long.valueOf(attend.getCurrentCnt()))

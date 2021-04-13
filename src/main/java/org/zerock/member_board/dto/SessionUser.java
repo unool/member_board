@@ -1,7 +1,6 @@
 package org.zerock.member_board.dto;
 import lombok.Getter;
 import org.zerock.member_board.entity.Member;
-import org.zerock.member_board.entity.User;
 import java.io.Serializable;
 
 /**

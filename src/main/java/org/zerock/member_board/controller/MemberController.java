@@ -18,8 +18,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/login")
-    public String login(String useremail, String userpass, Model model){
+    public String login(String useremail, String userpass, Model model, String loginFailMsg){
 
+        model.addAttribute("reason", loginFailMsg);
         model.addAttribute("useremail",useremail);
         model.addAttribute("userepass",userpass);
         return "/member/login";

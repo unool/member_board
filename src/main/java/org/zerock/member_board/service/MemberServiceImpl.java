@@ -1,5 +1,6 @@
 package org.zerock.member_board.service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,7 +9,10 @@ import org.springframework.stereotype.Service;
 import org.zerock.member_board.dto.MemberDTO;
 import org.zerock.member_board.dto.SessionUser;
 import org.zerock.member_board.entity.Member;
+import org.zerock.member_board.error.exception.ControllerException;
 import org.zerock.member_board.repository.MemberRepository;
+
+import javax.lang.model.type.ErrorType;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
@@ -29,12 +33,12 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
         if(result.isPresent())
         {
             member = result.get();
-            httpSession.setAttribute("user",new SessionUser(member));
+//            httpSession.setAttribute("user",new SessionUser(member));
         }
         else
         {
-            member = Member.builder().build();
-            //예외처리
+            throw new AuthenticationServiceException(email);
+//            throw new ControllerException("not.exist.username", this.getClass().getName());
         }
         return member;
     }
@@ -46,8 +50,8 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
 
         if(result.isPresent())
         {
-            //이미 아이디가 존재함.
-            return null;
+            //이미 아이디가 존재함 (예외발생)
+            throw new ControllerException("exist email", this.getClass().getName());
         }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

@@ -23,7 +23,7 @@
 
             <label>Find Address :  </label><input type="text" id="address">
             <button id="addSearch">Search</button>
-            <button type="button" id="comfirm">Confirm</button>
+            <button type="button" id="confirm">Confirm</button>
             <!--            네이버 지도 api-->
 
 
@@ -55,12 +55,10 @@
 
             <div class="form-group">
                 <label>Writer Email</label>
-                <input type="email" class="form-control" name="writerName"
+                <input type="email" class="form-control" name="writerEmail"
                 th:value="${session['user'].email}" readonly>
 
             </div>
-
-            <input type="hidden" name="writerEmail" th:value="${session['user'].email}">
 
             <input type="hidden" name="position" value="">
 
@@ -73,7 +71,7 @@
 
         <script>
 
-            $('#comfirm').click(function () {
+            $('#confirm').click(function () {
 
                 var totalAdd = jibunAdd + " | " + roadAdd;
                 $("input[name=place]").val(totalAdd);
@@ -178,15 +176,22 @@
                     pos = "lat:"+item.y +", lng:"+ item.x;
 
 
-
                     if (item.roadAddress) {
                         roadAdd = item.roadAddress;
                         htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+                    }
+                    else
+                    {
+                        roadAdd = "";
                     }
 
                     if (item.jibunAddress) {
                         jibunAdd = item.jibunAddress;
                         htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+                    }
+                    else
+                    {
+                        jibunAdd = "";
                     }
 
                     if (item.englishAddress) {

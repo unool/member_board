@@ -90,9 +90,6 @@ public interface ReviewService {
         {
             if(imageList.size() > 0)
             {
-
-                System.out.println("size : "+imageList.size());
-
                 int i = 0;
 
                 for(ReviewImage reviewImage : imageList)
@@ -101,8 +98,6 @@ public interface ReviewService {
                     {
                         break;
                     }
-                    System.out.println(i++);
-
                     ReviewImageDTO reviewImageDTO = ReviewImageDTO.builder()
                             .inum(reviewImage.getInum())
                             .uuid(reviewImage.getUuid())

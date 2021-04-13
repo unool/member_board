@@ -13,13 +13,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/cli");
-        config.setApplicationDestinationPrefixes("/app");
+        config.enableSimpleBroker("/cli"); //서버에서 send 할때 접두사
+        config.setApplicationDestinationPrefixes("/app"); //서버에서 receive 할때 접두사
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws_connect").withSockJS();
+        registry.addEndpoint("/ws_connect").withSockJS(); //클라에서 최초 connect 시도시 endpoint
 
     }
 }
