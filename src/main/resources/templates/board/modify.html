@@ -18,8 +18,9 @@
             <input type="hidden" name="minCost" th:value="${requestDTO.minCost}">
             <input type="hidden" name="maxCost" th:value="${requestDTO.maxCost}">
 
-
             <input type="hidden" name="bno" th:value="${dto.bno}" readonly>
+            <input type="hidden" name="end" th:value="${dto.end}">
+            <span th:text="${valid_end}"></span>
 
             <!--            <div class="form-group">-->
 <!--                <label>Bno</label>-->
@@ -31,12 +32,13 @@
                 <label>Title</label>
                 <input type="text" class="form-control" name="title"
                        th:value="${dto.title}">
+                <span th:text="${valid_title}" style="color: red"></span>
             </div>
 
             <div class="form-group">
                 <label>Content</label>
                 <textarea class="form-control" rows="5" name="content">[[${dto.content}]]</textarea>
-
+                <span th:text="${valid_content}" style="color: red"></span>
             </div>
 
             <!--            네이버 지도 api-->
@@ -51,6 +53,7 @@
             <div class="form-group">
                 <label>Limit Date</label>
                 <input name="limitDate" class="form-control"type="datetime-local" th:value="${dto.limitDate}"/><br>
+                <span th:text="${valid_limitDate}" style="color: red"></span>
             </div>
 
 
@@ -58,31 +61,37 @@
             <div class="form-group">
                 <label >Meeting Costs</label>
                 <input class="form-control" name="costs" th:value="${dto.costs}">
+                <span th:text="${valid_costs}" style="color: red"></span>
             </div>
 
             <div class="form-group">
                 <label >Meeting Place</label>
                 <input class="form-control" name="place" th:value="${dto.place}">
+                <span th:text="${valid_place}" style="color: red"></span>
             </div>
 
 
             <div class="form-group">
                 <label>Writer</label>
-                <input type="text" class="form-control" name="writer"
+                <input type="text" class="form-control" name="writerEmail"
                        th:value="${dto.writerEmail}" readonly>
             </div>
 
-            <div class="form-group">
-                <label>RegDate</label>
-                <input type="text" class="form-control"
-                       th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
-            </div>
 
-            <div class="form-group">
-                <label>ModDate</label>
-                <input type="text" class="form-control"
-                       th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
-            </div>
+
+<!--            수정할 수 없는 날짜-->
+<!--            <div class="form-group">-->
+<!--                <label>RegDate</label>-->
+<!--                <input type="text" class="form-control"-->
+<!--                       th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>-->
+<!--            </div>-->
+
+<!--            <div class="form-group">-->
+<!--                <label>ModDate</label>-->
+<!--                <input type="text" class="form-control"-->
+<!--                       th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>-->
+<!--            </div>-->
+
 
         </form>
 

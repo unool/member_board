@@ -22,6 +22,7 @@
         <table class="table table-striped">
             <thead>
             <!--            <th scope="col">#</th>-->
+            <th  scope="col">Number</th>
             <th  scope="col">Title</th>
             <th  scope="col">Like</th>
             <th  scope="col">Writer</th>
@@ -36,6 +37,16 @@
             <tr th:each="dto : ${result.dtoList}">
 
                 <th scope="row">
+                    <a th:href="@{/review/reviewRead(rro= ${dto.rro}, page = ${result.page}, type=${requestDTO.type},
+                    typeKeyword = ${requestDTO.typeKeyword} , region = ${requestDTO.region},
+                    regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
+                    maxCost=${requestDTO.maxCost})}">
+                        [[${dto.rro}]]
+                    </a>
+                </th>
+
+
+                <td>
                     <img th:if="${dto.imageList.size() > 0 && dto.imageList[0].path != null}"
                          th:src="|/review/getPhoto?fileName=${dto.imageList[0].getThumImgURL()}|">
 
@@ -44,10 +55,7 @@
                     regionKeyword=${requestDTO.regionKeyword}, minCost =${requestDTO.minCost},
                     maxCost=${requestDTO.maxCost})}">
                         [[${dto.title}]]</a>
-                </th>
-
-
-
+                </td>
 
                 <td> <img src="/img/icons8-facebook-like-24_fill.png"><small>[[${dto.like.likeCnt}]]</small></td>
                 <td><small>[[${dto.writerEmail}]]</small></td>

@@ -69,28 +69,26 @@
         <table class="table table-striped">
             <thead>
 <!--            <th scope="col">#</th>-->
-            <th width="400px" style="word-break:break-all" scope="col">Title</th>
+            <th width="50px" style="word-break:break-all" scope="col">Number</th>
+            <th width="100px" style="word-break:break-all" scope="col">Title</th>
             <th width="400px" style="word-break:break-all"scope="col">Place</th>
-            <th width="100px" scope="col">Writer</th>
+            <th width="150px" scope="col">Writer</th>
             <th width="50px" scope="col">Regdate</th>
             </thead>
 
             <tbody>
             <tr th:each="dto : ${result.dtoList}">
                 <th scope="row">
-<!--                    <a th:href="@{/board/read(bno= ${dto.bno}, page = ${result.page}, type=${pageRequestDTO.type},-->
-<!--                keyword = ${pageRequestDTO.keyword})}">-->
-<!--                        [[${dto.bno}]]-->
-<!--                    </a>-->
-
                     <a th:href="@{/board/read(bno= ${dto.bno}, page = ${result.page}, type=${pageRequestDTO.type},
                     typeKeyword = ${pageRequestDTO.typeKeyword} , region = ${pageRequestDTO.region},
                     regionKeyword=${pageRequestDTO.regionKeyword}, minCost =${pageRequestDTO.minCost},
                     maxCost=${pageRequestDTO.maxCost})}">
-
-                        [[${dto.title}]]</a>[<b th:text="${dto.replyCount}"></b>]
-
+                        [[${dto.bno}]]
+                    </a>
                 </th>
+                <td>
+                        [[${dto.title}]]</a>[<b th:text="${dto.replyCount}"></b>]
+                </td>
 
                 <td><small>[[${dto.place}]]</small></td>
                 <td><small> [[${dto.writerEmail}]]</small></td>

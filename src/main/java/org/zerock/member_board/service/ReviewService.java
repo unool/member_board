@@ -1,5 +1,6 @@
 package org.zerock.member_board.service;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.member_board.dto.*;
 import org.zerock.member_board.entity.Board;
@@ -10,6 +11,7 @@ import org.zerock.member_board.entity.redis.Like;
 import org.zerock.member_board.service.util.LogManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public interface ReviewService {
@@ -130,7 +132,9 @@ public interface ReviewService {
 
     void clickLikeReview (Long rro);
 
-    void removeReviewWithReviewImage(Long rro);
+    void removeReviewWithReviewImageAndLike(Long rro);
 
     List<ReviewDTO> getRecentReview();
+
+    Map<String, String> validateHandling(Errors errors);
 }

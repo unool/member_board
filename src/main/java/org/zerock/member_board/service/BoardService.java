@@ -1,4 +1,5 @@
 package org.zerock.member_board.service;
+import org.springframework.validation.Errors;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
@@ -8,6 +9,7 @@ import org.zerock.member_board.entity.redis.Attend;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 
 public interface BoardService {
@@ -18,7 +20,7 @@ public interface BoardService {
 
     BoardDTO get(Long bno);
 
-    void removeWithReplyies(Long bno);
+    void removeWithReplyiesAndReviewAll(Long bno);
 
     void modify(BoardDTO boardDTO);
 
@@ -69,4 +71,7 @@ public interface BoardService {
     void confirm(Long bno);
 
     List<BoardDTO> getRecentBoard();
+
+    Map<String, String> validateHandling(Errors errors);
+
 }

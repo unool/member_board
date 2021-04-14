@@ -3,26 +3,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.entity.Participation;
+import org.zerock.member_board.entity.Review;
 import org.zerock.member_board.entity.redis.Attend;
-import org.zerock.member_board.repository.AttendRepository;
-import org.zerock.member_board.repository.BoardRepository;
-import org.zerock.member_board.repository.ParticipationRepository;
-import org.zerock.member_board.repository.ReplyRepository;
+import org.zerock.member_board.repository.*;
 import org.zerock.member_board.repository.querydsl.SearchBoardRepositoryImpl;
 import org.zerock.member_board.service.util.MemberHandler;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 
 @Transactional
@@ -31,6 +28,9 @@ import java.util.Optional;
 @Log4j2
 public class BoardServiceImpl implements BoardService{
 
+    private final AttendService attendService;
+    private final ReviewServiceImpl reviewService;
+    private final ReviewRepository reviewRepository;
     private final BoardRepository boardRepository;
     private final ReplyRepository replyRepository;
     private final AttendRepository attendRepository;
@@ -118,12 +118,27 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public void removeWithReplyies(Long bno) {
+    public void removeWithReplyiesAndReviewAll(Long bno) { //한 게시물에 대한 모든 데이터 삭제
 
-        replyRepository.deleteByBno(bno);
-        boardRepository.deleteById(bno);
+        List<Review> result = reviewRepository.getReviewsByBno(bno);
+
+        //리뷰 전체 삭제
+        for(Review review : result)
+        {
+            //리뷰 로우, 리뷰 이미지 로우, 리뷰 실제 이미지 삭제, 레디스 좋아요 삭제
+            reviewService.removeReviewWithReviewImageAndLike(review.getRro());
+//            reviewImageRepository.deleteReviewImageByReview(review); //리뷰에 딸린 리뷰이미지 삭제
+//            reviewRepository.delete(review); //리뷰 자체 삭제
+
+        }
+
+        participationRepository.deleteByBno(bno);  //참가 전체 삭제
+        attendService.deleteAttend(bno); //레디스 참석 정보 삭제
+        replyRepository.deleteByBno(bno); //댓글 전체 삭제
+        boardRepository.deleteById(bno); //본 게시물 삭제
+
+
     }
-
 
     @Override
     public void modify(BoardDTO boardDTO) {
@@ -190,4 +205,19 @@ public class BoardServiceImpl implements BoardService{
 
         return dtoList;
     }
+
+    @Override
+    public Map<String, String> validateHandling(Errors errors) {
+
+        Map<String, String> validatorResult = new HashMap<>();
+
+        for(FieldError error : errors.getFieldErrors())
+        {
+            String fieldName = String.format("valid_%s",error.getField());
+            validatorResult.put(fieldName,error.getDefaultMessage());
+        }
+
+        return validatorResult;
+    }
+
 }

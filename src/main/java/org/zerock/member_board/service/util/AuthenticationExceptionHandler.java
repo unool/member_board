@@ -6,8 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 인증 관련 Exception 핸들러
- * 인증 과정 중 Exception 발생시 commence 동작
+ * 인증이 되지않은 요청이 인증이 필요한 요청을 하여 발생된 Exception에 대해 작동하는 Handler
  */
 
     public class AuthenticationExceptionHandler implements AuthenticationEntryPoint {

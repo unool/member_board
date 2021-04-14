@@ -19,15 +19,29 @@ public class LikeRepositoryTests {
     @Test
     public void Insert()
     {
-        IntStream.rangeClosed(1,20).forEach(i->{
 
+        IntStream.rangeClosed(47,49).forEach(i->
+        {
             Like like = Like.builder()
                     .id(String.valueOf(i))
                     .likeCnt(String.valueOf(0))
                     .likeMembers(new ArrayList<>())
                     .build();
-
             likeRepository.save(like);
         });
+
+
+
+
+//        IntStream.rangeClosed(1,20).forEach(i->{
+//
+//            Like like = Like.builder()
+//                    .id(String.valueOf(i))
+//                    .likeCnt(String.valueOf(0))
+//                    .likeMembers(new ArrayList<>())
+//                    .build();
+//
+//            likeRepository.save(like);
+//        });
     }
 }

@@ -16,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.member_board.dto.*;
 import org.zerock.member_board.entity.*;
@@ -216,7 +218,7 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void removeReviewWithReviewImage(Long rro) {
+    public void removeReviewWithReviewImageAndLike(Long rro) {
         Review review = Review.builder().
                 rro(rro)
                 .build();
@@ -229,6 +231,7 @@ public class ReviewServiceImpl implements ReviewService{
             reviewImageRepository.deleteReviewImageByReview(review);
         }
 
+        likeRepository.deleteById(rro.toString()); //레디스 좋아요 삭제
         reviewRepository.delete(review);
     }
 
@@ -500,5 +503,19 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         return dtoList;
+    }
+
+    @Override
+    public Map<String, String> validateHandling(Errors errors) {
+
+        Map<String, String> validatorResult = new HashMap<>();
+
+        for(FieldError error : errors.getFieldErrors())
+        {
+            String key = String.format("valid_%s", error.getField());
+            validatorResult.put(key, error.getDefaultMessage());
+        }
+
+        return validatorResult;
     }
 }

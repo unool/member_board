@@ -11,6 +11,7 @@ import org.zerock.member_board.dto.SessionUser;
 import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.error.exception.ControllerException;
 import org.zerock.member_board.repository.MemberRepository;
+import org.zerock.member_board.service.util.GetterMemberHandler;
 
 import javax.lang.model.type.ErrorType;
 import javax.servlet.http.HttpSession;
@@ -24,8 +25,10 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
     private final HttpSession httpSession;
     private final MemberRepository memberRepository;
 
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         Optional<Member> result = memberRepository.findById(email);
 
         Member member;
@@ -33,12 +36,10 @@ public class MemberServiceImpl implements UserDetailsService,MemberService {
         if(result.isPresent())
         {
             member = result.get();
-//            httpSession.setAttribute("user",new SessionUser(member));
         }
         else
         {
             throw new AuthenticationServiceException(email);
-//            throw new ControllerException("not.exist.username", this.getClass().getName());
         }
         return member;
     }

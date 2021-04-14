@@ -16,7 +16,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
-
+    /**
+     * Spring Security 설정
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -28,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/vendor/**","/modal/**","/member/**","/login/**",
                         "/review/**","/img/**","/attend/getAttend","/websocket/**",
                         "/ws_sock/**","/chat/**","/html/**","/webjars/**","/exception/**","/error/**").permitAll()
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/member/login")
@@ -52,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
 
+//    Service만 등록 되있었을 경우
 //    public void configure(AuthenticationManagerBuilder auth) throws Exception { // 9
 //        auth.userDetailsService(memberService)
 //                // 해당 서비스(userService)에서는 UserDetailsService를 implements해서
@@ -59,6 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .passwordEncoder(new BCryptPasswordEncoder());
 //    }
 
+    /**
+     * 인증이 되지않은 요청이 접근하여 Exception 발생시 돌아가는 Handler
+     * @return
+     */
     @Bean
     public AuthenticationExceptionHandler authenticationExceptionHandler(){
 
@@ -66,6 +75,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationExceptionHandler;
     }
 
+
+    /**
+     * 인증 과정을 실패했을때 (Exception) 실행되는 Handler
+     * @return
+     */
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler()
     {

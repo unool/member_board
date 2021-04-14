@@ -17,25 +17,17 @@ public class MemberHandler {
         String email = "";
 
 
-        if(object.getClass().getName().equals(Member.class.getName()))
+        if(object.getClass().getName().equals(DefaultOAuth2User.class.getName()))
         {
-            Member member = (Member) object;
-            email = member.getEmail();
-        }
-        else if(object.getClass().getName().equals(DefaultOAuth2User.class.getName()))
-        {
+            //Oauth2 로그인일 경우
             DefaultOAuth2User user = (DefaultOAuth2User) object;
             email = user.getAttribute("email");
         }
         else
         {
-
-//            System.out.println("일부러 exception");
-//            throw new RuntimeException();
-            //예외처리
+            //그냥 일반 Spring Security 로그인일 경우
+            email = (String) object;
         }
-
-
 
         return email;
     }

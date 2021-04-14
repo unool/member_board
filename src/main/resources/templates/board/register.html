@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
 
+
+
     <th:block th:fragment="content">
         <h1 class="mt-4">Board Register Page</h1>
 
@@ -9,14 +11,15 @@
         <form th:action="@{/board/register}" th:method="post">
             <div class="form-group">
                 <label >Title</label>
-                <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">
-
+                <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요" th:value="${boardDTO.title}">
+                <span th:text="${valid_title}" style="color: red"></span>
             </div>
             <div class="form-group">
                 <label >Content</label>
                 <textarea class="form-control" rows="7  " name="content"
-                placeholder="* 상세 위치 : &#13;&#10;* 모임 목적 : &#13;&#10;* 모임 일정 : "></textarea>
-
+                placeholder="* 상세 위치 : &#13;&#10;* 모임 목적 : &#13;&#10;* 모임 일정 : "
+                th:text="${boardDTO.content}"></textarea>
+                <span th:text="${valid_content}" style="color: red"></span>
             </div>
             <!--            네이버 지도 api-->
             <div id="map" style="width:50%;height:400px;"></div>
@@ -29,7 +32,8 @@
 
             <div class="form-group">
                 <label>Limit Date</label>
-                <input name="limitDate" class="form-control" type="datetime-local"><br>
+                <input name="limitDate" class="form-control" type="datetime-local" th:value="${boardDTO.limitDate}"><br>
+                <span th:text="${valid_limitDate}" style="color: red"></span>
             </div>
 
 
@@ -37,32 +41,36 @@
             <div class="form-group">
                 <label >Member Count</label>
                 <select name="reqCnt">
-                    <option value="2">2</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
+                    <option value="2" th:selected="${boardDTO.reqCnt} == 2">2</option>
+                    <option value="5" th:selected="${boardDTO.reqCnt} == 5">5</option>
+                    <option value="10" th:selected="${boardDTO.reqCnt} == 10">10</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label >Meeting Costs</label>
-                <input class="form-control" name="costs" placeholder="회비">
+                <input class="form-control" name="costs" placeholder="숫자만 입력하세요 (EX : 200 -> 200원)" th:value="${boardDTO.costs}">
+                <span th:text="${valid_costs}" style="color: red"></span>
             </div>
 
             <div class="form-group">
                 <label >Meeting Place</label>
-                <input class="form-control" name="place" placeholder="모임 장소">
+                <input class="form-control" name="place" placeholder="모임 장소" readonly th:value="${boardDTO.place}">
+                <span th:text="${valid_place}" style="color: red"></span>
             </div>
 
             <div class="form-group">
                 <label>Writer Email</label>
                 <input type="email" class="form-control" name="writerEmail"
                 th:value="${session['user'].email}" readonly>
-
+                <span th:text="${valid_writerEmail}"></span>
             </div>
 
-            <input type="hidden" name="position" value="">
+            <input type="hidden" name="position" th:value="${boardDTO.position}">
+            <span th:text="${valid_position}"></span>
 
             <input type="hidden" name="end" value="false">
+            <span th:text="${valid_end}"></span>
 
             <button type="submit" class="btn btn-primary"> Submit</button>
         </form>
@@ -134,10 +142,18 @@
                         jibunAdd = address.jibunAddress;
                         htmlAddresses.push('[지번 주소] ' + address.jibunAddress);
                     }
+                    else
+                    {
+                        jibunAdd = '';
+                    }
 
                     if (address.roadAddress !== '') {
                         roadAdd = address.roadAddress;
                         htmlAddresses.push('[도로명 주소] ' + address.roadAddress);
+                    }
+                    else
+                    {
+                        roadAdd = '';
                     }
 
                     infoWindow.setContent([

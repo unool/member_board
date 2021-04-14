@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.dto.BoardDTO;
 import org.zerock.member_board.dto.PageRequestDTO;
 import org.zerock.member_board.dto.PageResultDTO;
-import org.zerock.member_board.entity.Board;
 
 @Transactional
 @SpringBootTest
@@ -44,7 +43,7 @@ public class BoardServiceTests {
     @Test
     public void delete()
     {
-        boardService.removeWithReplyies(10L);
+        boardService.removeWithReplyiesAndReviewAll(10L);
     }
 
     @Test

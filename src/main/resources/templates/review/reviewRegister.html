@@ -11,23 +11,25 @@
 
             <div class="form-group">
                 <label >Attend List</label>
-                <select name="bno" class="form-control">
+                <select name="bno" class="form-control" >
                     <span th:each="dto : ${dtoList}">
-                        <option th:value="${dto.bno}">[[${dto.bno}]]:[[${dto.title}]]</option>
+                        <option th:value="${dto.bno}" th:selected="${dto.bno} == ${reviewDTO.bno}">[[${dto.bno}]]:[[${dto.title}]]</option>
                     </span>
                 </select>
             </div>
 
             <div class="form-group">
                 <label >Title</label>
-                    <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">
+                    <input type="text" class="form-control" name="title"
+                           placeholder="제목을 입력하세요" th:value="${reviewDTO.title}">
+                <span th:text="${valid_title}" style="color: red"></span>
             </div>
 
             <div class="form-group">
                 <label >Content</label>
                 <textarea class="form-control" rows="7  " name="content"
-                          placeholder="후기를 적어주세요"></textarea>
-
+                          placeholder="후기를 적어주세요" th:text="${reviewDTO.content}"></textarea>
+                <span th:text="${valid_content}" style="color: red"></span>
             </div>
 
             <div class="form-group">
@@ -45,7 +47,7 @@
                 <label>Writer Email</label>
                 <input type="email" class="form-control" name="writerEmail"
                        th:value="${session['user'].email}" readonly>
-
+                <span th:text="${valid_writerEmail}" style="color: red"></span>
             </div>
 
 

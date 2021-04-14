@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Review;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("select r, ri, m, b from Review r left outer join ReviewImage ri on ri.review = r left outer join " +
@@ -29,6 +30,8 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
                                   @Param("content") String content,
                                   @Param("rro") Long rro);
 
+    @Query("select r from Review r where r.board.bno = :bno")
+    List<Review> getReviewsByBno(Long bno);
 
 //    @Query("select r, ri from Review r left outer join ReviewImage ri on ri.review = r group by r") //이미지 하나만 가져오면 됨
 //    List<Object[]> getRecentReviewReviewImage()

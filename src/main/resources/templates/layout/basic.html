@@ -140,8 +140,7 @@
 
                 <th:block th:replace="${content}"></th:block>
 
-<!--                삭제-->
-                <button type="button" id="appSend"></button>
+
             </div>
 
         </div>
@@ -387,7 +386,7 @@
         })
 
         function reqChat(chatMember){ //웹소켓 채팅 신청
-            if(!confirm("채팅 신청을 하시겠습니까?"))
+            if(!confirm("채팅 신청을 하시겠습니까? (상대가 10초안에 수락 하지 않으면 자동 취소 됩니다)"))
             {
                 return;
             }

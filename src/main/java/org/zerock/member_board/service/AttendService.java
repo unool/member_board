@@ -123,4 +123,10 @@ public class AttendService {
 
         return attendDTO;
     }
+
+    public void deleteAttend(Long bno)
+    {
+        attendRepository.deleteById(bno.toString());
+    }
+
 }
