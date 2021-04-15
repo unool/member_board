@@ -1,15 +1,15 @@
 package org.zerock.member_board.repository;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.member_board.entity.Board;
 import org.zerock.member_board.entity.Reply;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+
+
 @Transactional
 @SpringBootTest
 public class ReplyRepositoryTests {

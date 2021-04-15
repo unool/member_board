@@ -16,4 +16,8 @@ public class WSSession {
     String email= "";
     String roomID= "";
 
+    public void outRoom(){
+        this.roomID = "";
+        this.childSessionId = "";
+    }
 }

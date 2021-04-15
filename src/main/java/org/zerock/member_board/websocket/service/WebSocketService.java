@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.service.util.LogManager;
+import org.zerock.member_board.service.util.MemberHandler;
 import org.zerock.member_board.websocket.dto.ChatMessage;
 import org.zerock.member_board.websocket.dto.ChatRoom;
 import org.zerock.member_board.websocket.dto.MSG_Type;
@@ -79,7 +81,6 @@ public class WebSocketService {
                 }
             }
             connectedList.remove(simpSessionId);
-
         }
         else //미포함 경우 자식소켓
         {
@@ -92,7 +93,6 @@ public class WebSocketService {
             String roomID = parentWS.getRoomID();
             if(roomID != "") //방 참가 유저였다면, (웹소켓이 Disconnect 됬는데 접속 리스트에 없다면 100%)
             {
-
                 HashMap<String,Object> data = new HashMap<>();
                 data.put("out_member", parentWS.getSimpSessionId());
 
@@ -101,8 +101,14 @@ public class WebSocketService {
                         .data(data)
                         .build();
 
+
                 ChatRoom chatRoom = chatRoomRepository.getRoom(roomID);
-                chatRoom.broadcastMembers(chatMessage);
+                if(chatRoom == null) //채팅중 한쪽 부모소켓이 끊키고 정상적으로 부모 자식소켓이 살아있던 유저일 경우 본인 처리만함
+                {
+                    parentWS.outRoom();
+                    return;
+                }
+                chatRoom.roomBroadcastMembers(chatMessage);
 
                 chatRoom.clear();
             }
@@ -123,7 +129,7 @@ public class WebSocketService {
         return null;
     }
 
-    public void subAppWSSession() {
+    public ChatMessage subAppWSSession() {
 
        HashMap<String, Object> data = new HashMap<>();
 
@@ -141,13 +147,14 @@ public class WebSocketService {
                .data(data)
                .build();
 //        Thread.sleep(2000);
-       broadcast(chatMessage);
+       return chatMessage;
     }
 
-    public ChatMessage receiveChatMessage(String sessionID, ChatMessage message)
+    public void receiveChatMessage(String sessionID, ChatMessage message)
     {
         LogManager.log("receiveChatMessage : " + message);
         ChatMessage chatMessage = null;
+
 
         switch (message.getMsg_type())
         {
@@ -158,13 +165,12 @@ public class WebSocketService {
                 chatMessage = join_req(sessionID, message);
                 break;
             case SUB_REQ:
-                subAppWSSession();
+                chatMessage = subAppWSSession();
                 break;
 
         }
 
-
-        return chatMessage;
+        broadcast(chatMessage);
     }
 
     private ChatMessage join_req(String sessionID, ChatMessage msg){
@@ -175,27 +181,33 @@ public class WebSocketService {
         ChatMessage returnMsg = null;
 
         HashMap<String, Object> data = new HashMap<>();
-        data.put("room_id", chatRoom.getRoomID());
+        data.put("room_id", msg.getData().get("room_id").toString());
 
 
         if(chatRoom == null) //수락 하기전에 방이 사라진경우, 요청하고 신청 유저가 나간 경우
         {
             data.put("open", "false");
+
+            //삭제 수정
+            data.put("room_member", "dd");
+        }
+        else
+        {
+            if(join.equals("false")) //불참
+            {
+                data.put("open", "false");
+                chatRoom.clear(); //방이 이미 만들어졌으므로
+            }
+            else //참가
+            {
+                data.put("open", "true");
+                WSSession wsSession = connectedList.get(sessionID);
+                chatRoom.joinRoom(wsSession); //방 참가
+            }
+            data.put("room_member", getRoomMembersEmail(chatRoom));
         }
 
-        if(join.equals("false")) //불참
-        {
-            data.put("open", "false");
-            chatRoom.clear(); //방이 이미 만들어졌으므로
-        }
-        else //참가
-        {
-            WSSession wsSession = connectedList.get(sessionID);
-            chatRoom.joinRoom(wsSession); //방 참가
-            data.put("open", "true");
-        }
 
-        data.put("room_member", getRoomMembersEmail(chatRoom));
         ChatMessage chatMessage = ChatMessage.builder()
                 .msg_type(MSG_Type.ROOM_OPEN)
                 .data(data)

@@ -277,7 +277,9 @@
             // window.name = "부모창 이름";
             window.name = "parentForm";
             // window.open("open할 window", "자식창 이름", "팝업창 옵션");
-            childWindow = window.open(url);
+            // childWindow = window.open(url); //기존 팝업방식
+
+            window.open(url, '_blank');
 
             //예외처리 팝업 설정이 안되있어서 아무런 리턴을 보내지 않을 경우 서버에서 자를것.
 

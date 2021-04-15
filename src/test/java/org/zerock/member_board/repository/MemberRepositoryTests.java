@@ -25,9 +25,9 @@ public class MemberRepositoryTests {
 
         IntStream.rangeClosed(1,20).forEach(i->{
             Member member = Member.builder()
-                    .email("unool" + i + "@yahoo.co.kr")
+                    .email("january" + i + "@yahoo.co.kr")
                     .kind(Kind.NORMAL.getKey())
-                    .name("영현"+i)
+                    .name("길동"+i)
                     .auth(Role.USER.getKey())
                     .password(d.encode("1234"))
                     .phone("010-4775-2222")

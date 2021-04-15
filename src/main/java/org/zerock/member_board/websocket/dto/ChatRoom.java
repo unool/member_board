@@ -14,6 +14,7 @@ public class ChatRoom {
     HashMap<String,WSSession> members = new HashMap<>();
     private Timer timer = new Timer();
     private WebSocketService webSocketService;
+    boolean timerCheck = false; //현재 타이머 구동 여부
 
     public ChatRoom(WebSocketService webSocketService){
 
@@ -34,11 +35,12 @@ public class ChatRoom {
             waitRoom(); //방 타이머 시작, 시간 초과시 방 폐기
         }
         else{
-            timer.cancel();
+            stopTimer();
         }
     }
 
     public void waitRoom(){
+        timerCheck = true;
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -49,7 +51,23 @@ public class ChatRoom {
     }
 
     public void clear(){
-        timer.cancel(); //시작 안한 상태에서, 혹은 종료된 상태에서 cancel시 예외처리
+
+        if(timerCheck) //타이머가 돌고있는 상황이라면
+        {
+            stopTimer(); //시작 안한 상태에서, 혹은 종료된 상태에서 cancel시 예외처리
+
+            //채팅 취소됨을 메세지 보냄
+            HashMap<String,Object> data = new HashMap<>();
+            data.put("room_id",roomID);
+            data.put("open","false");
+            data.put("room_member", webSocketService.getRoomMembersEmail(this));
+            ChatMessage chatMessage = ChatMessage.builder()
+                    .msg_type(MSG_Type.ROOM_OPEN)
+                    .data(data)
+                    .build();
+            webSocketService.broadcast(chatMessage);
+        }
+
 
         for(WSSession wsSession : members.values())
         {
@@ -60,7 +78,7 @@ public class ChatRoom {
         webSocketService.destroyRoom(this);
     }
 
-    public void broadcastMembers(ChatMessage chatMessage)
+    public void roomBroadcastMembers(ChatMessage chatMessage)
     {
         String destination = getDestination(roomID);
 
@@ -72,4 +90,9 @@ public class ChatRoom {
         return AddressUtil.getRoomSendAdd() + chatRoomId;
     }
 
+    private void stopTimer()
+    {
+        timerCheck = false;
+        timer.cancel();
+    }
 }

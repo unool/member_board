@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.zerock.member_board.service.util.MemberHandler;
 import org.zerock.member_board.websocket.dto.ChatMessage;
 import org.zerock.member_board.websocket.service.WebSocketService;
 
@@ -13,19 +14,20 @@ public class GreetingController {
     private final WebSocketService webSocketService;
 
     @MessageMapping("/broad")
-    @SendTo("/cli/broad")
-    public ChatMessage greeting(ChatMessage message, @Header("simpSessionId") String sessionId) throws Exception {
+    public void greeting(ChatMessage message, @Header("simpSessionId") String sessionId) {
 
-        return webSocketService.receiveChatMessage(sessionId,message);
+
+       webSocketService.receiveChatMessage(sessionId,message);
     }
 
     @MessageMapping("/room/{room_id}")
     public void receiveRoomMessage(@DestinationVariable("room_id") String room_id,
                                    ChatMessage message, @Header("simpSessionId") String sessionId) {
 
-        System.out.println("receive room : " +message);
         if(message == null || !StringUtils.hasText(room_id))
         {
+            //채팅중에 부모창을 리프레시 하거나 닫으면 부모소켓 끊어질때 방 폐기하므로 해당 구문 진입
+            //더 상세한 예외처리 필요
             return;
         }
 
