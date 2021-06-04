@@ -46,17 +46,17 @@ public class BoardServiceTests {
         boardService.removeWithReplyiesAndReviewAll(10L);
     }
 
-    @Test
-    public void modify()
-    {
-        BoardDTO boardDTO = BoardDTO.builder()
-                .bno(2L)
-                .content("11")
-                .build();
-
-
-        boardService.modify(boardDTO);
-    }
+//    @Test
+//    public void modify()
+//    {
+//        BoardDTO boardDTO = BoardDTO.builder()
+//                .bno(2L)
+//                .content("11")
+//                .build();
+//
+//
+//        boardService.modify(boardDTO);
+//    }
 
 
 }

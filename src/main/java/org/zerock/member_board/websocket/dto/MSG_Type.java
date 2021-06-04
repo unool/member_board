@@ -10,5 +10,6 @@ public enum MSG_Type{
     OPEN_RES, //자식 소켓으로 열어서 입장했음을 알린다
     ROOM_CHAT,//자식<->서버, 채팅창 대화 내용
     USER_OUT,
-    SUB_REQ
+    SUB_REQ,
+    ROOM_CLOSE //룸 입장전 종료
 }

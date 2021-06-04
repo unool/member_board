@@ -4,9 +4,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.zerock.member_board.entity.Member;
 import org.zerock.member_board.service.util.LogManager;
-import org.zerock.member_board.service.util.MemberHandler;
 import org.zerock.member_board.websocket.dto.ChatMessage;
 import org.zerock.member_board.websocket.dto.ChatRoom;
 import org.zerock.member_board.websocket.dto.MSG_Type;
@@ -66,6 +64,34 @@ public class WebSocketService {
         }
 
         return null;
+    }
+
+    public void room_close(String parenWebsocketSessionId, ChatMessage message){ //모달에서 채팅 종료 누른 경우
+
+        WSSession wsSession = connectedList.get(parenWebsocketSessionId);
+        if(wsSession.getRoomID() != null)
+        {
+            if(wsSession.getRoomID() != "")
+            {
+                ChatRoom chatRoom = chatRoomRepository.getRoom(wsSession.getRoomID());
+
+                HashMap<String,Object> data = new HashMap<>();
+                data.put("room_id",chatRoom.getRoomID());
+                data.put("open","false");
+                data.put("room_member", getRoomMembersEmail(chatRoom));
+                ChatMessage chatMessage = ChatMessage.builder()
+                        .msg_type(MSG_Type.ROOM_OPEN)
+                        .data(data)
+                        .build();
+
+                broadcast(chatMessage); //방이 취소 되었음을 알린다
+
+                if(chatRoom != null)
+                {
+                    chatRoom.clear(); //본인, 룸안에 멤버리스트, 룸자체를 다 초기화
+                }
+            }
+        }
     }
 
     public void closedWSSession(String simpSessionId)
@@ -160,17 +186,23 @@ public class WebSocketService {
         {
             case CHAT_REQ : //대화요청
                 chatMessage = chat_req(sessionID, message);
+                broadcast(chatMessage);
                 break;
             case JOIN_REQ:
                 chatMessage = join_req(sessionID, message);
+                broadcast(chatMessage);
                 break;
             case SUB_REQ:
                 chatMessage = subAppWSSession();
+                broadcast(chatMessage);
+                break;
+            case ROOM_CLOSE:
+                room_close(sessionID,message);
                 break;
 
         }
 
-        broadcast(chatMessage);
+
     }
 
     private ChatMessage join_req(String sessionID, ChatMessage msg){

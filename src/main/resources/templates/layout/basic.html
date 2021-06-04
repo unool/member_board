@@ -70,7 +70,8 @@
 <!--                <div id="member_list"></div>-->
                 <div class="chat_list_wrap" style="overflow:scroll; height:300px; margin-top: 100px">
                     <div class="header">
-                        Loging Member
+                        Loging Member<br>
+                        채팅을 원하는 유저를 클릭해주세요!
                     </div>
                     <!--                <div class="search">-->
                     <!--                    <input type="text" placeholder="이메일/아이피 검색" />-->
@@ -149,6 +150,24 @@
     </div>
     <!-- /#wrapper -->
 
+    <div class="modal fade" id="chatPop" role="dialog" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">알림!</h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" onclick="room_open()">채팅 입장</button>
+                    <button type="button" onclick="room_close()">채팅 종료</button>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- Menu Toggle Script -->
     <script th:inline="javascript">
@@ -167,6 +186,7 @@
         const appSendAdd = '/app/broad';
         var childWindow = null;
         var chatManager = null;
+        var chatJsonData = null;
 
         function ChatManager(session) {
             this.appClient = null;
@@ -230,7 +250,10 @@
                                 return;
                             }
 
-                            room_open(jsonData);
+                            chatJsonData = jsonData;
+                            $('#chatPop').modal('show');
+                            chatManager.rooomID = jsonData.data.room_id;
+                            // room_open(jsonData); //기존
                         }
                         break;
 
@@ -256,9 +279,10 @@
             return false;
         }
 
-        function room_open(jsonData){
+        function room_open(){
 
-            chatManager.rooomID = jsonData.data.room_id; //room id 저장
+            $('#chatPop').modal("hide"); //모달 닫기
+            chatManager.rooomID = chatJsonData.data.room_id; //room id 저장
 
             openChildWindow();
         }
@@ -388,7 +412,7 @@
         })
 
         function reqChat(chatMember){ //웹소켓 채팅 신청
-            if(!confirm("채팅 신청을 하시겠습니까? (상대가 10초안에 수락 하지 않으면 자동 취소 됩니다)"))
+            if(!confirm("채팅 신청을 하시겠습니까? (상대가 15초안에 수락 하지 않으면 자동 취소 됩니다)"))
             {
                 return;
             }
@@ -420,6 +444,17 @@
         function log(log){
             console.log("&&===========================&& "+ log + "&&===========================&& ");
         }
+
+        function room_close()
+        {
+            var message = new Object();
+            message.msg_type = 'ROOM_CLOSE';
+            message.data = {room_id : chatManager.rooomID};
+            send(appSendAdd,message);
+            $('#chatPop').modal('hide');
+        }
+
+
 
         $(document).ready(function () {
             var session = [[${session['user']}]];

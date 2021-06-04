@@ -16,20 +16,6 @@ public class ReplyServiceTests {
     @Autowired
     ReplyService replyService;
 
-    @Test
-    public void register(){
-
-
-
-        ReplyDTO replyDTO = ReplyDTO.builder()
-                .bno(50L)
-                .replyer("guest")
-                .text("단위테스트")
-                .build();
-
-
-        replyService.register(replyDTO);
-    }
 
     @Test
     public void getList(){

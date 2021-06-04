@@ -47,7 +47,7 @@ public class ChatRoom {
                 clear();
             }
         };
-        timer.schedule(timerTask, 10000); //10초간 대기
+        timer.schedule(timerTask, 15000); //20초간 대기
     }
 
     public void clear(){
